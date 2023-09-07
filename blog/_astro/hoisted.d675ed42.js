@@ -1,0 +1,1 @@
+import"./Header.astro_astro_type_script_index_0_lang.eec05685.js";const o=document.querySelector(".goTopButton");o.addEventListener("click",()=>{window.scrollTo({top:0,behavior:"smooth"})});window.addEventListener("scroll",()=>{window.scrollY>200?o.style.display="block":o.style.display="none"});

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="canonical" href="https://smj.im/posts/how-pgp-works/">
+    <meta name="generator" content="Astro v2.2.1">
+
+    <!-- General Meta Tags -->
+    <title>PGP工作原理详解</title>
+    <meta name="title" content="PGP工作原理详解">
+    <meta name="description" content="PGP是什么，它的工作原理及应用场景是什么？本文对此进行了详细的解释。">
+    <meta name="author" content="Sanmoji">
+    <meta name="keywords" content="Linux, AI, Thinking">
+    <link rel="sitemap" href="/sitemap-index.xml">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="PGP工作原理详解">
+    <meta property="og:description" content="PGP是什么，它的工作原理及应用场景是什么？本文对此进行了详细的解释。">
+    <meta property="og:url" content="https://smj.im/posts/how-pgp-works/">
+    <meta property="og:image" content="https://smj.im/PGP%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://smj.im/posts/how-pgp-works/">
+    <meta property="twitter:title" content="PGP工作原理详解">
+    <meta property="twitter:description" content="PGP是什么，它的工作原理及应用场景是什么？本文对此进行了详细的解释。">
+    <meta property="twitter:image" content="https://smj.im/PGP%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3.png">
+
+    <!-- Umami Tracking Code -->
+    <script>(function(){const tid = "7e882ff9-48a6-48d9-9c4a-11f7c4fb671c";
+const tdomain = "um.oii.im";
+
+      // 检查是否在本地环境（假设本地环境的主机名为"localhost"或"127.0.0.1"）
+      if (
+        window.location.hostname !== "localhost" &&
+        window.location.hostname !== "127.0.0.1"
+      ) {
+        // 如果不是本地环境，则加载Umami脚本
+        const trackingURL = "https://" + tdomain + "/script.js";
+        console.log("this is not localhost");
+        // 替换 YOUR_UMAMI_WEBSITE_ID 为你自己的Umami网站ID
+        const umamiWebsiteId = { tid };
+        const umamiTrackingURL = trackingURL;
+
+        console.log(umamiWebsiteId);
+        console.log(umamiTrackingURL);
+        // 获取当前正在执行的<script>标签
+        const currentScript = document.currentScript;
+
+        // 创建并添加Umami脚本到页面
+        const umamiScript = document.createElement("script");
+        umamiScript.async = true;
+        umamiScript.defer = true;
+        umamiScript.dataset.websiteId = umamiWebsiteId.tid;
+        umamiScript.src = umamiTrackingURL;
+
+        // 在当前<script>标签之后插入新创建的<script>标签
+        currentScript.parentNode.insertBefore(
+          umamiScript,
+          currentScript.nextSibling
+        );
+      } else {
+        console.log("this is localhost");
+      }
+    })();</script>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
+    
+    <link rel="sitemap" href="/sitemap-index.xml">
+    <script src="/toggle-theme.js"></script>
+  <link rel="stylesheet" href="/_astro/about.d5105181.css" />
+<link rel="stylesheet" href="/_astro/about.6e6daff0.css" />
+<link rel="stylesheet" href="/_astro/_slug_.40cf44c5.css" />
+<link rel="stylesheet" href="/_astro/_slug_.41a32359.css" />
+<link rel="stylesheet" href="/_astro/_slug_.ad230599.css" />
+<link rel="stylesheet" href="/_astro/_slug_.906d67ca.css" /><script type="module" src="/_astro/hoisted.d675ed42.js"></script></head>
+  <body>
+    
+  <header class="astro-3EF6KSR2">
+  <a id="skip-to-content" href="#main-content" class="astro-3EF6KSR2">Skip to content</a>
+  <div class="nav-container astro-3EF6KSR2">
+    <div class="top-nav-wrap astro-3EF6KSR2">
+      <a href="/" class="logo astro-3EF6KSR2">
+        方寸之间
+      </a>
+      <nav id="nav-menu" class="astro-3EF6KSR2">
+        <button class="hamburger-menu focus-outline astro-3EF6KSR2" aria-label="Open Menu" aria-expanded="false" aria-controls="menu-items">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="menu-icon astro-3EF6KSR2">
+            <line x1="7" y1="12" x2="21" y2="12" class="line astro-3EF6KSR2"></line>
+            <line x1="3" y1="6" x2="21" y2="6" class="line astro-3EF6KSR2"></line>
+            <line x1="12" y1="18" x2="21" y2="18" class="line astro-3EF6KSR2"></line>
+            <line x1="18" y1="6" x2="6" y2="18" class="close astro-3EF6KSR2"></line>
+            <line x1="6" y1="6" x2="18" y2="18" class="close astro-3EF6KSR2"></line>
+          </svg>
+        </button>
+        <ul id="menu-items" class="display-none sm:flex astro-3EF6KSR2">
+          <li class="astro-3EF6KSR2">
+            <a href="/posts" class=" astro-3EF6KSR2">
+              Posts
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/tags" class=" astro-3EF6KSR2">
+              Tags
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/links" class=" astro-3EF6KSR2">
+              Links
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/about" class=" astro-3EF6KSR2">
+              About
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/search" tabindex="0" class="group inline-block focus-outline p-3 sm:p-1  astro-3EF6KSR2 astro-5EUNQZKT" aria-label="search" title="Search">
+  
+              <svg xmlns="http://www.w3.org/2000/svg" class="scale-125 sm:scale-100 astro-3EF6KSR2"><path d="M19.023 16.977a35.13 35.13 0 0 1-1.367-1.384c-.372-.378-.596-.653-.596-.653l-2.8-1.337A6.962 6.962 0 0 0 16 9c0-3.859-3.14-7-7-7S2 5.141 2 9s3.14 7 7 7c1.763 0 3.37-.66 4.603-1.739l1.337 2.8s.275.224.653.596c.387.363.896.854 1.384 1.367l1.358 1.392.604.646 2.121-2.121-.646-.604c-.379-.372-.885-.866-1.391-1.36zM9 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z" class="astro-3EF6KSR2"></path>
+              </svg>
+            
+</a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <button id="theme-btn" class="focus-outline astro-3EF6KSR2" title="Toggles light & dark" aria-label="auto" aria-live="polite">
+                  <svg xmlns="http://www.w3.org/2000/svg" id="moon-svg" class="astro-3EF6KSR2">
+                    <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" id="sun-svg" class="astro-3EF6KSR2">
+                    <path d="M6.993 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007S14.761 6.993 12 6.993 6.993 9.239 6.993 12zM12 8.993c1.658 0 3.007 1.349 3.007 3.007S13.658 15.007 12 15.007 8.993 13.658 8.993 12 10.342 8.993 12 8.993zM10.998 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2h-3zm17 0h3v2h-3zM4.219 18.363l2.12-2.122 1.415 1.414-2.12 2.122zM16.24 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.342 7.759 4.22 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="max-w-3xl mx-auto px-4">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+</header>
+  <div class="mx-auto flex w-full max-w-3xl justify-start px-2 astro-VJ4TPSPI">
+    <button class="focus-outline mb-2 mt-8 flex hover:opacity-75 astro-VJ4TPSPI" onclick="history.back()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="astro-VJ4TPSPI"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-VJ4TPSPI"></path>
+      </svg><span class="astro-VJ4TPSPI">Go back</span>
+    </button>
+  </div>
+  <main id="main-content" class="astro-VJ4TPSPI">
+    <h1 class="post-title astro-VJ4TPSPI">PGP工作原理详解</h1>
+    <div class="flex items-center space-x-2 opacity-80 my-2 astro-VJ4TPSPI"><svg xmlns="http://www.w3.org/2000/svg" class="scale-100 inline-block h-6 w-6 fill-skin-base" aria-hidden="true"><path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path><path d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z"></path></svg><span class="sr-only">Posted on:</span><span class="italic text-base">February 18, 2023<span aria-hidden="true"> | </span><span class="sr-only"> at </span>03:59 PM</span></div>
+    <article id="article" role="article" class="prose mx-auto mt-8 max-w-3xl astro-VJ4TPSPI">
+      <button class="goTopButton astro-VJ4TPSPI">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="icon-tabler astro-VJ4TPSPI" viewBox="0 0 16 16">
+          <path d="M3.204 11h9.592L8 5.519 3.204 11zm-.753-.659 4.796-5.48a1 1 0 0 1 1.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 0 1-.753-1.659z" class="astro-VJ4TPSPI"></path>
+        </svg>
+      </button>
+      <h2 id="table-of-contents">Table of contents</h2>
+<p></p><details><summary>Open Table of contents</summary><p></p>
+<ul>
+<li>
+<p><a href="#%E5%89%8D%E8%A8%80">前言</a></p>
+</li>
+<li>
+<p><a href="#pgp-%E5%AE%9A%E4%B9%89">PGP 定义</a></p>
+</li>
+<li>
+<p><a href="#pgp-%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86">PGP 工作原理</a></p>
+<ul>
+<li><a href="#%E5%AF%B9%E7%A7%B0%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86">对称密钥加密</a></li>
+<li><a href="#%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86">公钥加密</a></li>
+<li><a href="#pgp-%E7%A4%BA%E4%BE%8B">PGP 示例</a></li>
+</ul>
+</li>
+<li>
+<p><a href="#pgp-%E5%8A%A0%E5%AF%86%E7%94%A8%E9%80%94">PGP 加密用途</a></p>
+</li>
+<li>
+<p><a href="#%E6%80%BB%E7%BB%93">总结</a></p>
+</li>
+<li>
+<p><a href="#reference">Reference</a></p>
+</li>
+</ul>
+<p></p></details><p></p>
+<h2 id="前言">前言</h2>
+<p>最近在浏览<a href="https://www.stephendiehl.com/blog/disconnect.html" rel="nofollow">博客<span>🔗</span></a>的时候发现博主的 PGP Key 页面，虽然之前知道是用于邮件通信加密的，但是具体原理及使用却不太清楚，所以找了时间查阅了相关资料，整理一下 PGP 加密的一些内容。</p>
+<h2 id="pgp-定义">PGP 定义</h2>
+<p>Pretty Good Privacy（PGP）是一个<a href="https://en.wikipedia.org/wiki/Encryption_software" rel="nofollow">加密程序<span>🔗</span></a>，为<a href="https://en.wikipedia.org/wiki/Data_communication" rel="nofollow">数据通信<span>🔗</span></a>提供<a href="https://en.wikipedia.org/wiki/Cryptographic" rel="nofollow">加密<span>🔗</span></a><a href="https://en.wikipedia.org/wiki/Privacy" rel="nofollow">隐私<span>🔗</span></a>和<a href="https://en.wikipedia.org/wiki/Authentication" rel="nofollow">身份验证<span>🔗</span></a>。PGP 用于对文本、电子邮件、文件、目录和整个磁盘分区进行签名、加密和解密，并提高电子邮件通信的安全性。PGP 加密使用<a href="https://en.wikipedia.org/wiki/Cryptographic_hash_function" rel="nofollow">散列<span>🔗</span></a>，<a href="https://en.wikipedia.org/wiki/Data_compression" rel="nofollow">数据压缩<span>🔗</span></a>，<a href="https://en.wikipedia.org/wiki/Symmetric-key_cryptography" rel="nofollow">对称密钥加密<span>🔗</span></a>，最后是<a href="https://en.wikipedia.org/wiki/Public-key_cryptography" rel="nofollow">公钥加密<span>🔗</span></a>的串行组合。其中最关键的是两种形式的加密的组合：对称密钥加密(Symmetric Cryptography)和非对称密钥加密(Asymmetric cryptography)。</p>
+<h2 id="pgp-工作原理">PGP 工作原理</h2>
+<p>在实现 PGP 加密的过程中，首先使用对称密钥加密算法对原始数据进行加密。对称密钥加密算法包括 DES、AES、Blowfish 等，这些算法能够快速地加密和解密数据，但是需要发送方和接收方之间共享密钥。</p>
+<p>为了避免在网络上传输密钥，PGP 使用了公钥加密算法。公钥加密算法是一种使用不同的密钥加密和解密的算法，其中公钥用于加密，而私钥用于解密。公钥加密算法包括 RSA、DSA 等，这些算法具有极高的安全性，但是加密和解密速度比对称密钥加密算法慢得多。</p>
+<p>PGP 将对称密钥加密，并使用接收方的公钥进行加密。这种方式可以保证密钥的安全性，同时可以确保只有接收方可以解密对称密钥，从而保护了数据的机密性。接收方使用自己的私钥对加密的对称密钥进行解密，然后使用对称密钥对数据进行解密。这种方式既可以保护数据的安全性，也可以提高加解密的速度。</p>
+<p><img src="https://cdn.staticaly.com/gh/baddate/pichost@master/blog/PGP-diagram.3j9g4tes6dts.webp" alt="PGP工作原理示意" title="PGP工作原理"></p>
+<p>PGP 使用两种类型的加密算法来保护数据：对称密钥加密和公钥加密。对称密钥加密是一种使用相同密钥加密和解密的算法，因此在加密和解密之间需要共享密钥。而公钥加密则是一种使用不同的密钥加密和解密的算法，其中公钥用于加密，而私钥用于解密。下面我将简单介绍一下这两种算法的工作原理。</p>
+<h3 id="对称密钥加密">对称密钥加密</h3>
+<p>对称密钥加密是一种使用相同密钥加密和解密的算法，因此在加密和解密之间需要共享密钥。对称密钥加密的过程如下：</p>
+<ol>
+<li>发送方选择一个加密密钥，并使用它将原始数据加密。</li>
+<li>加密后的数据被发送到接收方。</li>
+<li>接收方使用相同的密钥将加密的数据解密。</li>
+</ol>
+<p>尽管对称密钥加密非常高效，但它有一个明显的缺点，即需要在发送方和接收方之间共享密钥。如果这个密钥被黑客或其他人获取，数据将无法得到保护。为了解决这个问题，PGP 使用了另一种加密算法：公钥加密。</p>
+<h3 id="公钥加密">公钥加密</h3>
+<p>公钥加密是一种使用不同的密钥加密和解密的算法，其中公钥用于加密，而私钥用于解密。公钥加密的过程如下：</p>
+<ol>
+<li>发送方获取接收方的公钥，并使用它将对称密钥加密。</li>
+<li>加密后的对称密钥和加密后的数据被发送到接收方。</li>
+<li>接收方使用自己的私钥将加密的对称密钥解密。</li>
+<li>接收方使用解密后的对称密钥将加密的数据解密。</li>
+</ol>
+<p>公钥加密允许发送方使用接收方的公钥加密数据，而无需共享对称密钥。这样，即使黑客获得了加密后的数据，也无法使用它，因为他们没有接收方的私钥来解密对称密钥。</p>
+<h3 id="pgp-示例">PGP 示例</h3>
+<p>我用常用的加密电子邮件来举个例子，具体的工作流程是：</p>
+<p>用户 A 要给用户 B 发送邮件。</p>
+<ol>
+<li>用户 B 生成一对密钥（公钥和私钥），将公钥发送给用户 A。</li>
+<li>PGP 软件使用算法生成一个随机的会话密钥，这个密钥是一个很大的数字，而且只使用一次。</li>
+<li>用户 A 用刚刚生成的密钥，加密邮件，并使用用户 B 的公钥对该密钥进行加密。</li>
+<li>最后，用户 A 将加密的邮件及密钥发送给用户 B，用户 B 使用自己的私钥进行解密，得到会话密钥，进而可以解密完整的邮件。</li>
+</ol>
+<h2 id="pgp-加密用途">PGP 加密用途</h2>
+<p>PGP 有三个主要用途：</p>
+<ul>
+<li><strong>发送和接收加密电子邮件。</strong></li>
+<li>验证向您发送此消息的人员的身份，即<strong>数字签名验证</strong>。</li>
+<li>加密数据。</li>
+</ul>
+<p>其中，发送安全电子邮件 - 是迄今为止 PGP 的主要应用。数字签名是一种基于公钥加密的技术，用于证明信息的发送者身份和信息完整性，以及防止信息被篡改。发送方使用自己的私钥对消息的摘要进行加密，生成数字签名。接收方使用发送方的公钥对数字签名进行解密，并生成消息的摘要，比对两个摘要是否一致，来验证消息的完整性和身份。如果数字签名验证失败，则说明消息可能被篡改或者来自伪造的发送方。</p>
+<h2 id="总结">总结</h2>
+<p>PGP 使用对称密钥加密算法保护数据机密性，使用公钥加密算法保护对称密钥的安全性，使用数字签名技术验证消息的完整性和身份。这种结合了对称密钥和公钥加密的方法，可以在安全性和效率之间取得平衡。PGP 已经成为一种被广泛应用的数据加密和数字签名的标准，保护了用户的隐私和安全。</p>
+<h2 id="reference">Reference</h2>
+<p><a href="https://en.wikipedia.org/wiki/Pretty_Good_Privacy" rel="nofollow">Pretty Good Privacy - Wikipedia<span>🔗</span></a></p>
+<p><a href="https://www.varonis.com/blog/pgp-encryption/" rel="nofollow">What is PGP Encryption and How Does It Work? | Varonis<span>🔗</span></a></p>
+<p><a href="https://hackernoon.com/public-key-cryptography-simply-explained-e932e3093046" rel="nofollow">Public Key Cryptography Simply Explained | Hacker Noon<span>🔗</span></a></p>
+    </article>
+    <ul class="tags-container astro-VJ4TPSPI">
+      <li class="inline-block my-1 underline-offset-4 astro-BLWJYJPT">
+  <a href="/tags/pgp" class="text-sm pr-2 group astro-BLWJYJPT">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-BLWJYJPT"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">pgp</span>
+  </a>
+</li><li class="inline-block my-1 underline-offset-4 astro-BLWJYJPT">
+  <a href="/tags/encryption" class="text-sm pr-2 group astro-BLWJYJPT">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-BLWJYJPT"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">encryption</span>
+  </a>
+</li>
+    </ul>
+  </main>
+  <footer class="mt-auto astro-SZ7XMLTE">
+  <div class="max-w-3xl mx-auto px-0">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+  <div class="footer-wrapper astro-SZ7XMLTE">
+    <div class="social-icons flex astro-UPU6FZXR">
+  <a href="https://github.com/baddate" tabindex="0" class="group inline-block link-button astro-UPU6FZXR astro-5EUNQZKT" title=" SMJ on Github">
+  
+        <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="icon-tabler"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path
+      d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"
+    ></path>
+  </svg>
+      
+</a><a href="https://twitter.com/realSanmoji" tabindex="0" class="group inline-block link-button astro-UPU6FZXR astro-5EUNQZKT" title="SMJ on Twitter">
+  
+        <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon-tabler"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z"></path>
+    </svg>
+      
+</a>
+</div>
+    <div class="copyright-wrapper astro-SZ7XMLTE">
+      <span class="astro-SZ7XMLTE">Copyright &#169; 2023</span>
+      <span class="separator astro-SZ7XMLTE">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE"><a href="/privacy" class="astro-SZ7XMLTE">Privacy</a></span>
+      <span class="separator astro-SZ7XMLTE">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE"><a href="/disclaimer" class="astro-SZ7XMLTE">Disclaimer</a></span>
+    </div>
+  </div>
+</footer>
+
+  </body></html>
+

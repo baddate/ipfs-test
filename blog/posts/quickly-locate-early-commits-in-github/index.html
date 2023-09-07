@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="canonical" href="https://smj.im/posts/quickly-locate-early-commits-in-github/">
+    <meta name="generator" content="Astro v2.2.1">
+
+    <!-- General Meta Tags -->
+    <title>如何快速查看github代码库中早期commits</title>
+    <meta name="title" content="如何快速查看github代码库中早期commits">
+    <meta name="description" content="在学习开源项目时，最好是从头开始看源码，这就需要快速定位到早期的commits。">
+    <meta name="author" content="Sanmoji">
+    <meta name="keywords" content="Linux, AI, Thinking">
+    <link rel="sitemap" href="/sitemap-index.xml">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="如何快速查看github代码库中早期commits">
+    <meta property="og:description" content="在学习开源项目时，最好是从头开始看源码，这就需要快速定位到早期的commits。">
+    <meta property="og:url" content="https://smj.im/posts/quickly-locate-early-commits-in-github/">
+    <meta property="og:image" content="https://smj.im/%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E6%9F%A5%E7%9C%8Bgithub%E4%BB%A3%E7%A0%81%E5%BA%93%E4%B8%AD%E6%97%A9%E6%9C%9Fcommits.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://smj.im/posts/quickly-locate-early-commits-in-github/">
+    <meta property="twitter:title" content="如何快速查看github代码库中早期commits">
+    <meta property="twitter:description" content="在学习开源项目时，最好是从头开始看源码，这就需要快速定位到早期的commits。">
+    <meta property="twitter:image" content="https://smj.im/%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E6%9F%A5%E7%9C%8Bgithub%E4%BB%A3%E7%A0%81%E5%BA%93%E4%B8%AD%E6%97%A9%E6%9C%9Fcommits.png">
+
+    <!-- Umami Tracking Code -->
+    <script>(function(){const tid = "7e882ff9-48a6-48d9-9c4a-11f7c4fb671c";
+const tdomain = "um.oii.im";
+
+      // 检查是否在本地环境（假设本地环境的主机名为"localhost"或"127.0.0.1"）
+      if (
+        window.location.hostname !== "localhost" &&
+        window.location.hostname !== "127.0.0.1"
+      ) {
+        // 如果不是本地环境，则加载Umami脚本
+        const trackingURL = "https://" + tdomain + "/script.js";
+        console.log("this is not localhost");
+        // 替换 YOUR_UMAMI_WEBSITE_ID 为你自己的Umami网站ID
+        const umamiWebsiteId = { tid };
+        const umamiTrackingURL = trackingURL;
+
+        console.log(umamiWebsiteId);
+        console.log(umamiTrackingURL);
+        // 获取当前正在执行的<script>标签
+        const currentScript = document.currentScript;
+
+        // 创建并添加Umami脚本到页面
+        const umamiScript = document.createElement("script");
+        umamiScript.async = true;
+        umamiScript.defer = true;
+        umamiScript.dataset.websiteId = umamiWebsiteId.tid;
+        umamiScript.src = umamiTrackingURL;
+
+        // 在当前<script>标签之后插入新创建的<script>标签
+        currentScript.parentNode.insertBefore(
+          umamiScript,
+          currentScript.nextSibling
+        );
+      } else {
+        console.log("this is localhost");
+      }
+    })();</script>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
+    
+    <link rel="sitemap" href="/sitemap-index.xml">
+    <script src="/toggle-theme.js"></script>
+  <link rel="stylesheet" href="/_astro/about.d5105181.css" />
+<link rel="stylesheet" href="/_astro/about.6e6daff0.css" />
+<link rel="stylesheet" href="/_astro/_slug_.40cf44c5.css" />
+<link rel="stylesheet" href="/_astro/_slug_.41a32359.css" />
+<link rel="stylesheet" href="/_astro/_slug_.ad230599.css" />
+<link rel="stylesheet" href="/_astro/_slug_.906d67ca.css" /><script type="module" src="/_astro/hoisted.d675ed42.js"></script></head>
+  <body>
+    
+  <header class="astro-3EF6KSR2">
+  <a id="skip-to-content" href="#main-content" class="astro-3EF6KSR2">Skip to content</a>
+  <div class="nav-container astro-3EF6KSR2">
+    <div class="top-nav-wrap astro-3EF6KSR2">
+      <a href="/" class="logo astro-3EF6KSR2">
+        方寸之间
+      </a>
+      <nav id="nav-menu" class="astro-3EF6KSR2">
+        <button class="hamburger-menu focus-outline astro-3EF6KSR2" aria-label="Open Menu" aria-expanded="false" aria-controls="menu-items">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="menu-icon astro-3EF6KSR2">
+            <line x1="7" y1="12" x2="21" y2="12" class="line astro-3EF6KSR2"></line>
+            <line x1="3" y1="6" x2="21" y2="6" class="line astro-3EF6KSR2"></line>
+            <line x1="12" y1="18" x2="21" y2="18" class="line astro-3EF6KSR2"></line>
+            <line x1="18" y1="6" x2="6" y2="18" class="close astro-3EF6KSR2"></line>
+            <line x1="6" y1="6" x2="18" y2="18" class="close astro-3EF6KSR2"></line>
+          </svg>
+        </button>
+        <ul id="menu-items" class="display-none sm:flex astro-3EF6KSR2">
+          <li class="astro-3EF6KSR2">
+            <a href="/posts" class=" astro-3EF6KSR2">
+              Posts
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/tags" class=" astro-3EF6KSR2">
+              Tags
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/links" class=" astro-3EF6KSR2">
+              Links
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/about" class=" astro-3EF6KSR2">
+              About
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/search" tabindex="0" class="group inline-block focus-outline p-3 sm:p-1  astro-3EF6KSR2 astro-5EUNQZKT" aria-label="search" title="Search">
+  
+              <svg xmlns="http://www.w3.org/2000/svg" class="scale-125 sm:scale-100 astro-3EF6KSR2"><path d="M19.023 16.977a35.13 35.13 0 0 1-1.367-1.384c-.372-.378-.596-.653-.596-.653l-2.8-1.337A6.962 6.962 0 0 0 16 9c0-3.859-3.14-7-7-7S2 5.141 2 9s3.14 7 7 7c1.763 0 3.37-.66 4.603-1.739l1.337 2.8s.275.224.653.596c.387.363.896.854 1.384 1.367l1.358 1.392.604.646 2.121-2.121-.646-.604c-.379-.372-.885-.866-1.391-1.36zM9 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z" class="astro-3EF6KSR2"></path>
+              </svg>
+            
+</a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <button id="theme-btn" class="focus-outline astro-3EF6KSR2" title="Toggles light & dark" aria-label="auto" aria-live="polite">
+                  <svg xmlns="http://www.w3.org/2000/svg" id="moon-svg" class="astro-3EF6KSR2">
+                    <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" id="sun-svg" class="astro-3EF6KSR2">
+                    <path d="M6.993 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007S14.761 6.993 12 6.993 6.993 9.239 6.993 12zM12 8.993c1.658 0 3.007 1.349 3.007 3.007S13.658 15.007 12 15.007 8.993 13.658 8.993 12 10.342 8.993 12 8.993zM10.998 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2h-3zm17 0h3v2h-3zM4.219 18.363l2.12-2.122 1.415 1.414-2.12 2.122zM16.24 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.342 7.759 4.22 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="max-w-3xl mx-auto px-4">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+</header>
+  <div class="mx-auto flex w-full max-w-3xl justify-start px-2 astro-VJ4TPSPI">
+    <button class="focus-outline mb-2 mt-8 flex hover:opacity-75 astro-VJ4TPSPI" onclick="history.back()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="astro-VJ4TPSPI"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-VJ4TPSPI"></path>
+      </svg><span class="astro-VJ4TPSPI">Go back</span>
+    </button>
+  </div>
+  <main id="main-content" class="astro-VJ4TPSPI">
+    <h1 class="post-title astro-VJ4TPSPI">如何快速查看github代码库中早期commits</h1>
+    <div class="flex items-center space-x-2 opacity-80 my-2 astro-VJ4TPSPI"><svg xmlns="http://www.w3.org/2000/svg" class="scale-100 inline-block h-6 w-6 fill-skin-base" aria-hidden="true"><path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path><path d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z"></path></svg><span class="sr-only">Posted on:</span><span class="italic text-base">December 3, 2020<span aria-hidden="true"> | </span><span class="sr-only"> at </span>10:32 AM</span></div>
+    <article id="article" role="article" class="prose mx-auto mt-8 max-w-3xl astro-VJ4TPSPI">
+      <button class="goTopButton astro-VJ4TPSPI">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="icon-tabler astro-VJ4TPSPI" viewBox="0 0 16 16">
+          <path d="M3.204 11h9.592L8 5.519 3.204 11zm-.753-.659 4.796-5.48a1 1 0 0 1 1.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 0 1-.753-1.659z" class="astro-VJ4TPSPI"></path>
+        </svg>
+      </button>
+      <p>如果你想要学习一个开源库，最好的方法就是从头开始看源码，所以你可能想要从第一次 commit 开始看。有的人可能觉得很简单啊，进入 commit 页面直接翻到最后一页就好了啊。的确，如果是你看的是一个小的项目，提交次数不会太多，你可能翻几页就到最后了，可是，如果是像 Linux 这种项目，将近 100k 次提交，手动翻页翻到明年了。。。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/baddate/imagedb/linux-commits-count.png" alt="https://cdn.jsdelivr.net/gh/baddate/imagedb/linux-commits-count.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/baddate/imagedb/linux-commit.png" alt="https://cdn.jsdelivr.net/gh/baddate/imagedb/linux-commit.png"></p>
+<p>这时候就需要一个简单的方法能够定位到第一次 commit。</p>
+<p>所以第一个想法就是在 URL 上操作，仔细观察对比之后可以发现，GitHub 的翻页是根据 commit 的 SHA 值来定位的，</p>
+<p>第二页的 url 是</p>
+<p><a href="https://github.com/torvalds/linux/commits/master?after=127c501a03d5db8b833e953728d3bcf53c8832a9+34&#x26;branch=master" rel="nofollow">https://github.com/torvalds/linux/commits/master?after=127c501a03d5db8b833e953728d3bcf53c8832a9+34&#x26;branch=master<span>🔗</span></a></p>
+<p>仔细观察其中的<code>127c501a03d5db8b833e953728d3bcf53c8832a9</code>是最新一次 commit 的 SHA 值，后面还有一个<code>+34</code>就是定位到第 36 次(因为是 after1+34，所以要是 36)的 commit。所以要定位到 Linux 的第一次 commit 就可以把+34 改为+967826(967828-2)</p>
+<p><img src="https://cdn.jsdelivr.net/gh/baddate/imagedb/linux-commit-first.png" alt="https://cdn.jsdelivr.net/gh/baddate/imagedb/linux-commit-first.png"></p>
+<p>到这里就成功定位到第一次 commit 了，当然，以此类推，你可以定位到任何一个 commit。</p>
+    </article>
+    <ul class="tags-container astro-VJ4TPSPI">
+      <li class="inline-block my-1 underline-offset-4 astro-BLWJYJPT">
+  <a href="/tags/github" class="text-sm pr-2 group astro-BLWJYJPT">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-BLWJYJPT"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">github</span>
+  </a>
+</li>
+    </ul>
+  </main>
+  <footer class="mt-auto astro-SZ7XMLTE">
+  <div class="max-w-3xl mx-auto px-0">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+  <div class="footer-wrapper astro-SZ7XMLTE">
+    <div class="social-icons flex astro-UPU6FZXR">
+  <a href="https://github.com/baddate" tabindex="0" class="group inline-block link-button astro-UPU6FZXR astro-5EUNQZKT" title=" SMJ on Github">
+  
+        <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="icon-tabler"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path
+      d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"
+    ></path>
+  </svg>
+      
+</a><a href="https://twitter.com/realSanmoji" tabindex="0" class="group inline-block link-button astro-UPU6FZXR astro-5EUNQZKT" title="SMJ on Twitter">
+  
+        <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon-tabler"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z"></path>
+    </svg>
+      
+</a>
+</div>
+    <div class="copyright-wrapper astro-SZ7XMLTE">
+      <span class="astro-SZ7XMLTE">Copyright &#169; 2023</span>
+      <span class="separator astro-SZ7XMLTE">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE"><a href="/privacy" class="astro-SZ7XMLTE">Privacy</a></span>
+      <span class="separator astro-SZ7XMLTE">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE"><a href="/disclaimer" class="astro-SZ7XMLTE">Disclaimer</a></span>
+    </div>
+  </div>
+</footer>
+
+  </body></html>
+

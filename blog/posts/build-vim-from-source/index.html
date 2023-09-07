@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="canonical" href="https://smj.im/posts/build-vim-from-source/">
+    <meta name="generator" content="Astro v2.2.1">
+
+    <!-- General Meta Tags -->
+    <title>安装定制化Vim</title>
+    <meta name="title" content="安装定制化Vim">
+    <meta name="description" content="为了使用带有剪切板功能的Vim，我尝试了很多方法，最后发现，还是源码构建最好用">
+    <meta name="author" content="Sanmoji">
+    <meta name="keywords" content="Linux, AI, Thinking">
+    <link rel="sitemap" href="/sitemap-index.xml">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="安装定制化Vim">
+    <meta property="og:description" content="为了使用带有剪切板功能的Vim，我尝试了很多方法，最后发现，还是源码构建最好用">
+    <meta property="og:url" content="https://smj.im/posts/build-vim-from-source/">
+    <meta property="og:image" content="https://smj.im/%E5%AE%89%E8%A3%85%E5%AE%9A%E5%88%B6%E5%8C%96Vim.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://smj.im/posts/build-vim-from-source/">
+    <meta property="twitter:title" content="安装定制化Vim">
+    <meta property="twitter:description" content="为了使用带有剪切板功能的Vim，我尝试了很多方法，最后发现，还是源码构建最好用">
+    <meta property="twitter:image" content="https://smj.im/%E5%AE%89%E8%A3%85%E5%AE%9A%E5%88%B6%E5%8C%96Vim.png">
+
+    <!-- Umami Tracking Code -->
+    <script>(function(){const tid = "7e882ff9-48a6-48d9-9c4a-11f7c4fb671c";
+const tdomain = "um.oii.im";
+
+      // 检查是否在本地环境（假设本地环境的主机名为"localhost"或"127.0.0.1"）
+      if (
+        window.location.hostname !== "localhost" &&
+        window.location.hostname !== "127.0.0.1"
+      ) {
+        // 如果不是本地环境，则加载Umami脚本
+        const trackingURL = "https://" + tdomain + "/script.js";
+        console.log("this is not localhost");
+        // 替换 YOUR_UMAMI_WEBSITE_ID 为你自己的Umami网站ID
+        const umamiWebsiteId = { tid };
+        const umamiTrackingURL = trackingURL;
+
+        console.log(umamiWebsiteId);
+        console.log(umamiTrackingURL);
+        // 获取当前正在执行的<script>标签
+        const currentScript = document.currentScript;
+
+        // 创建并添加Umami脚本到页面
+        const umamiScript = document.createElement("script");
+        umamiScript.async = true;
+        umamiScript.defer = true;
+        umamiScript.dataset.websiteId = umamiWebsiteId.tid;
+        umamiScript.src = umamiTrackingURL;
+
+        // 在当前<script>标签之后插入新创建的<script>标签
+        currentScript.parentNode.insertBefore(
+          umamiScript,
+          currentScript.nextSibling
+        );
+      } else {
+        console.log("this is localhost");
+      }
+    })();</script>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
+    
+    <link rel="sitemap" href="/sitemap-index.xml">
+    <script src="/toggle-theme.js"></script>
+  <link rel="stylesheet" href="/_astro/about.d5105181.css" />
+<link rel="stylesheet" href="/_astro/about.6e6daff0.css" />
+<link rel="stylesheet" href="/_astro/_slug_.40cf44c5.css" />
+<link rel="stylesheet" href="/_astro/_slug_.41a32359.css" />
+<link rel="stylesheet" href="/_astro/_slug_.ad230599.css" />
+<link rel="stylesheet" href="/_astro/_slug_.906d67ca.css" /><script type="module" src="/_astro/hoisted.d675ed42.js"></script></head>
+  <body>
+    
+  <header class="astro-3EF6KSR2">
+  <a id="skip-to-content" href="#main-content" class="astro-3EF6KSR2">Skip to content</a>
+  <div class="nav-container astro-3EF6KSR2">
+    <div class="top-nav-wrap astro-3EF6KSR2">
+      <a href="/" class="logo astro-3EF6KSR2">
+        方寸之间
+      </a>
+      <nav id="nav-menu" class="astro-3EF6KSR2">
+        <button class="hamburger-menu focus-outline astro-3EF6KSR2" aria-label="Open Menu" aria-expanded="false" aria-controls="menu-items">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="menu-icon astro-3EF6KSR2">
+            <line x1="7" y1="12" x2="21" y2="12" class="line astro-3EF6KSR2"></line>
+            <line x1="3" y1="6" x2="21" y2="6" class="line astro-3EF6KSR2"></line>
+            <line x1="12" y1="18" x2="21" y2="18" class="line astro-3EF6KSR2"></line>
+            <line x1="18" y1="6" x2="6" y2="18" class="close astro-3EF6KSR2"></line>
+            <line x1="6" y1="6" x2="18" y2="18" class="close astro-3EF6KSR2"></line>
+          </svg>
+        </button>
+        <ul id="menu-items" class="display-none sm:flex astro-3EF6KSR2">
+          <li class="astro-3EF6KSR2">
+            <a href="/posts" class=" astro-3EF6KSR2">
+              Posts
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/tags" class=" astro-3EF6KSR2">
+              Tags
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/links" class=" astro-3EF6KSR2">
+              Links
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/about" class=" astro-3EF6KSR2">
+              About
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/search" tabindex="0" class="group inline-block focus-outline p-3 sm:p-1  astro-3EF6KSR2 astro-5EUNQZKT" aria-label="search" title="Search">
+  
+              <svg xmlns="http://www.w3.org/2000/svg" class="scale-125 sm:scale-100 astro-3EF6KSR2"><path d="M19.023 16.977a35.13 35.13 0 0 1-1.367-1.384c-.372-.378-.596-.653-.596-.653l-2.8-1.337A6.962 6.962 0 0 0 16 9c0-3.859-3.14-7-7-7S2 5.141 2 9s3.14 7 7 7c1.763 0 3.37-.66 4.603-1.739l1.337 2.8s.275.224.653.596c.387.363.896.854 1.384 1.367l1.358 1.392.604.646 2.121-2.121-.646-.604c-.379-.372-.885-.866-1.391-1.36zM9 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z" class="astro-3EF6KSR2"></path>
+              </svg>
+            
+</a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <button id="theme-btn" class="focus-outline astro-3EF6KSR2" title="Toggles light & dark" aria-label="auto" aria-live="polite">
+                  <svg xmlns="http://www.w3.org/2000/svg" id="moon-svg" class="astro-3EF6KSR2">
+                    <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" id="sun-svg" class="astro-3EF6KSR2">
+                    <path d="M6.993 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007S14.761 6.993 12 6.993 6.993 9.239 6.993 12zM12 8.993c1.658 0 3.007 1.349 3.007 3.007S13.658 15.007 12 15.007 8.993 13.658 8.993 12 10.342 8.993 12 8.993zM10.998 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2h-3zm17 0h3v2h-3zM4.219 18.363l2.12-2.122 1.415 1.414-2.12 2.122zM16.24 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.342 7.759 4.22 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="max-w-3xl mx-auto px-4">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+</header>
+  <div class="mx-auto flex w-full max-w-3xl justify-start px-2 astro-VJ4TPSPI">
+    <button class="focus-outline mb-2 mt-8 flex hover:opacity-75 astro-VJ4TPSPI" onclick="history.back()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="astro-VJ4TPSPI"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-VJ4TPSPI"></path>
+      </svg><span class="astro-VJ4TPSPI">Go back</span>
+    </button>
+  </div>
+  <main id="main-content" class="astro-VJ4TPSPI">
+    <h1 class="post-title astro-VJ4TPSPI">安装定制化Vim</h1>
+    <div class="flex items-center space-x-2 opacity-80 my-2 astro-VJ4TPSPI"><svg xmlns="http://www.w3.org/2000/svg" class="scale-100 inline-block h-6 w-6 fill-skin-base" aria-hidden="true"><path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path><path d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z"></path></svg><span class="sr-only">Posted on:</span><span class="italic text-base">August 10, 2023<span aria-hidden="true"> | </span><span class="sr-only"> at </span>04:07 PM</span></div>
+    <article id="article" role="article" class="prose mx-auto mt-8 max-w-3xl astro-VJ4TPSPI">
+      <button class="goTopButton astro-VJ4TPSPI">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="icon-tabler astro-VJ4TPSPI" viewBox="0 0 16 16">
+          <path d="M3.204 11h9.592L8 5.519 3.204 11zm-.753-.659 4.796-5.48a1 1 0 0 1 1.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 0 1-.753-1.659z" class="astro-VJ4TPSPI"></path>
+        </svg>
+      </button>
+      <h2 id="table-of-contents">Table of contents</h2>
+<p></p><details><summary>Open Table of contents</summary><p></p>
+<ul>
+<li><a href="#0-%E7%A1%AE%E8%AE%A4%E6%98%AF%E5%90%A6%E5%B8%A6%E6%9C%89%E5%89%AA%E5%88%87%E6%9D%BF%E7%89%B9%E6%80%A7">0. 确认是否带有剪切板特性</a></li>
+<li><a href="#1-%E4%BD%BF%E7%94%A8-gvim">1. 使用 gvim</a></li>
+<li><a href="#2-%E4%BD%BF%E7%94%A8-arch-linux-%E7%A4%BE%E5%8C%BA%E7%9A%84%E7%AC%AC%E4%B8%89%E6%96%B9%E6%BA%90%E4%BB%93%E5%BA%93">2. 使用 Arch Linux 社区的第三方源仓库</a></li>
+<li><a href="#3-aur-%E5%AE%89%E8%A3%85">3. AUR 安装</a></li>
+<li><a href="#4-%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85">4. 源码安装</a></li>
+<li><a href="#5-%E6%B5%8B%E8%AF%95">5. 测试</a></li>
+<li><a href="#6-%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5">6. 参考链接</a></li>
+</ul>
+<p></p></details><p></p>
+<h2 id="0-确认是否带有剪切板特性">0. 确认是否带有剪切板特性</h2>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">vim --version | grep clipboard</span></span></code></pre>
+<p>如果输出<code>+clipboard</code>代表有剪切板特性，恭喜你，可以直接下拉进入文末；如果出现<code>-clipboard</code>则说明没有，那你可以接着往下看。</p>
+<h2 id="1-使用-gvim">1. 使用 gvim</h2>
+<p>直接安装 gvim，带有命令行版本的 Vim 是支持剪切板特性的。</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">sudo pacman -S gvim</span></span></code></pre>
+<h2 id="2-使用-arch-linux-社区的第三方源仓库">2. 使用 Arch Linux 社区的第三方源仓库</h2>
+<blockquote>
+<p>鲁迅曾说：遇事不决，上 Arch wiki。</p>
+</blockquote>
+<p>官方 wiki 的 Vim 界面提到了一个 Unofficial Repository
+<code>herecura</code>，这是一个个人维护的源仓库，里面是一些个人编译的 Linux 软件。</p>
+<p>将以下内容加入<code>/etc/pacman.conf</code>：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">[herecura]</span></span>
+<span class="line"><span style="color: #abb2bf">Server = https://repo.herecura.eu/$repo/$arch</span></span></code></pre>
+<p>然后安装<code>vim-cli</code>：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">sudo pacman -Syu</span></span>
+<span class="line"><span style="color: #abb2bf">sudo pacman -S vim-cli</span></span></code></pre>
+<h2 id="3-aur-安装">3. AUR 安装</h2>
+<ul>
+<li>
+<p>如果你对 AUR 了解比较多，可以尝试自己构建 PKGBUILD 文件。</p>
+</li>
+<li>
+<p>如果不了解也没关系，我们可以直接找现成的。可以选择直接修改 Arch Linux 官方的 PKGBUILD，在这基础上加入 clipboard 功能支持。</p>
+</li>
+</ul>
+<p>i. 克隆官方的 Vim 包构建仓库：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">git clone https://gitlab.archlinux.org/archlinux/packaging/packages/vim.git</span></span></code></pre>
+<p>ii. 修改<code>PKGBUILD</code>文件，修改<code>--with-x</code>为<code>yes</code>，为了节省时间，可以去掉 gvim 的构建。</p>
+<details>
+<summary>点击这里查看修改后的`PKGBUILD`内容</summary>
+<p><a href="https://pb.oii.im/R66p" rel="nofollow">点击这里复制<span>🔗</span></a></p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">pkgbase=vim</span></span>
+<span class="line"><span style="color: #abb2bf">pkgname=('vim' 'vim-runtime')</span></span>
+<span class="line"><span style="color: #abb2bf">pkgver=9.0.1678</span></span>
+<span class="line"><span style="color: #abb2bf">_versiondir=90</span></span>
+<span class="line"><span style="color: #abb2bf">pkgrel=1</span></span>
+<span class="line"><span style="color: #abb2bf">pkgdesc='Vi Improved, a highly configurable, improved version of the vi text editor'</span></span>
+<span class="line"><span style="color: #abb2bf">url='https://www.vim.org'</span></span>
+<span class="line"><span style="color: #abb2bf">arch=('x86_64' 'x86_64_v3')</span></span>
+<span class="line"><span style="color: #abb2bf">license=('custom:vim')</span></span>
+<span class="line"><span style="color: #abb2bf">makedepends=('glibc' 'libgcrypt' 'gpm' 'python' 'ruby' 'libxt' 'gtk3' 'lua'</span></span>
+<span class="line"><span style="color: #abb2bf">             'gawk' 'tcl' 'zlib' 'libcanberra')</span></span>
+<span class="line"><span style="color: #abb2bf">source=(https://github.com/vim/vim/archive/v${pkgver}/${pkgbase}-${pkgver}.tar.gz fix-perl-build.patch</span></span>
+<span class="line"><span style="color: #abb2bf">        vimrc</span></span>
+<span class="line"><span style="color: #abb2bf">        archlinux.vim</span></span>
+<span class="line"><span style="color: #abb2bf">        vimdoc.hook)</span></span>
+<span class="line"><span style="color: #abb2bf">sha256sums=('e0b52a997b4f6180c5d8a5dae717075d99650c3e2e7761d1878a3dd7011ec315'</span></span>
+<span class="line"><span style="color: #abb2bf">            'f79c2afd26bbe0b21375293203d8f0e8dad2424146014ceafc4e8eca6ecf7d39'</span></span>
+<span class="line"><span style="color: #abb2bf">            'b16e85e457397ab2043a7ee0a3c84307c6b4eac157fd0b721694761f25b3ed5b'</span></span>
+<span class="line"><span style="color: #abb2bf">            'cc3d931129854c298eb22e993ec14c2ad86cc1e70a08a64496f5e06559289972'</span></span>
+<span class="line"><span style="color: #abb2bf">            '8e9656934d9d7793063230d15a689e10455e6db9b9fe73afa0f294792795d8ae')</span></span>
+<span class="line"><span style="color: #abb2bf">sha512sums=('c5ffb7ca56ff4eee70f06599dd84db2eb28ddadac229d4f7faf01174805923636a4ce61486bdf5a47910c929613dc9b9290dfc9288006222b4bc4ac891548bb8'</span></span>
+<span class="line"><span style="color: #abb2bf">            '184dd232db5b4a346e9751e58ad0a9b2f60d50d1a2aa2050415d288445606d80c239745f0d8987ff822d2acf6826104a81f8e59c8f1785095d1f319c0fe4abf0'</span></span>
+<span class="line"><span style="color: #abb2bf">            '4b5bed0813f22af9e158ea9aa56a4a9862dd786ba2d201f20159ccf652da6190164aaed0b6b7217d578f7b25c33a8adcc307bfcf3caa8d173a7ff29e2a00fee7'</span></span>
+<span class="line"><span style="color: #abb2bf">            'fe091d289d876f45319c898f6021ef86d6a238b540c225a279c46efc5c36fa7d868cd0cee73a111811c4be90df160f85340bb251be3a437727dbe5c699950363'</span></span>
+<span class="line"><span style="color: #abb2bf">            'a02ad0d66f300160911aeb81d8886c6c558436ac4ee3fcd161dd65c6b1e5d1f41b9005a7f5bb5ba68d57027fc1c8e43daabf055bd6207fb5a216a67f758df8d1')</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">prepare() {</span></span>
+<span class="line"><span style="color: #abb2bf">  (cd vim-${pkgver}/src</span></span>
+<span class="line"><span style="color: #abb2bf">    patch -Np2 -i ../../fix-perl-build.patch</span></span>
+<span class="line"><span style="color: #abb2bf">    # define the place for the global (g)vimrc file (set to /etc/vimrc)</span></span>
+<span class="line"><span style="color: #abb2bf">    sed -E 's|^.*(#define SYS_.*VIMRC_FILE.*").*$|\1|g' -i feature.h</span></span>
+<span class="line"><span style="color: #abb2bf">    sed -E 's|^.*(#define VIMRC_FILE.*").*$|\1|g' -i feature.h</span></span>
+<span class="line"><span style="color: #abb2bf">    autoconf</span></span>
+<span class="line"><span style="color: #abb2bf">  )</span></span>
+<span class="line"><span style="color: #abb2bf">  cp -a vim-${pkgver} gvim-${pkgver}</span></span>
+<span class="line"><span style="color: #abb2bf">}</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">build() {</span></span>
+<span class="line"><span style="color: #abb2bf">  echo "Building vim..."</span></span>
+<span class="line"><span style="color: #abb2bf">  (cd vim-${pkgver}</span></span>
+<span class="line"><span style="color: #abb2bf">    ./configure \</span></span>
+<span class="line"><span style="color: #abb2bf">      --prefix=/usr \</span></span>
+<span class="line"><span style="color: #abb2bf">      --localstatedir=/var/lib/vim \</span></span>
+<span class="line"><span style="color: #abb2bf">      --with-features=huge \</span></span>
+<span class="line"><span style="color: #abb2bf">      --with-compiledby='Arch Linux' \</span></span>
+<span class="line"><span style="color: #abb2bf">      --enable-gpm \</span></span>
+<span class="line"><span style="color: #abb2bf">      --enable-acl \</span></span>
+<span class="line"><span style="color: #abb2bf">      --with-x=yes \ # 这里改为yes</span></span>
+<span class="line"><span style="color: #abb2bf">      --disable-gui \</span></span>
+<span class="line"><span style="color: #abb2bf">      --enable-multibyte \</span></span>
+<span class="line"><span style="color: #abb2bf">      --enable-cscope \</span></span>
+<span class="line"><span style="color: #abb2bf">      --enable-netbeans \</span></span>
+<span class="line"><span style="color: #abb2bf">      --enable-perlinterp=dynamic \</span></span>
+<span class="line"><span style="color: #abb2bf">      --enable-python3interp=dynamic \</span></span>
+<span class="line"><span style="color: #abb2bf">      --enable-rubyinterp=dynamic \</span></span>
+<span class="line"><span style="color: #abb2bf">      --enable-luainterp=dynamic \</span></span>
+<span class="line"><span style="color: #abb2bf">      --enable-tclinterp=dynamic \</span></span>
+<span class="line"><span style="color: #abb2bf">      --disable-canberra</span></span>
+<span class="line"><span style="color: #abb2bf">    make</span></span>
+<span class="line"><span style="color: #abb2bf">  )</span></span>
+<span class="line"><span style="color: #abb2bf">}</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">check() {</span></span>
+<span class="line"><span style="color: #abb2bf">  cd vim-${pkgver}</span></span>
+<span class="line"><span style="color: #abb2bf">  TERM=xterm make -j1 test</span></span>
+<span class="line"><span style="color: #abb2bf">}</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">package_vim-runtime() {</span></span>
+<span class="line"><span style="color: #abb2bf">  pkgdesc+=' (shared runtime)'</span></span>
+<span class="line"><span style="color: #abb2bf">  optdepends=('sh: support for some tools and macros'</span></span>
+<span class="line"><span style="color: #abb2bf">              'python: demoserver example tool'</span></span>
+<span class="line"><span style="color: #abb2bf">              'gawk: mve tools upport')</span></span>
+<span class="line"><span style="color: #abb2bf">  backup=('etc/vimrc')</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">  cd vim-${pkgver}</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">  make -j1 VIMRCLOC=/etc DESTDIR="${pkgdir}" install</span></span>
+<span class="line"><span style="color: #abb2bf">  # man and bin files belong to 'vim'</span></span>
+<span class="line"><span style="color: #abb2bf">  rm -r "${pkgdir}"/usr/share/man/ "${pkgdir}"/usr/bin/</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">  # Don't forget logtalk.dict</span></span>
+<span class="line"><span style="color: #abb2bf">  install -Dm 644 runtime/ftplugin/logtalk.dict \</span></span>
+<span class="line"><span style="color: #abb2bf">    "${pkgdir}"/usr/share/vim/vim${_versiondir}/ftplugin/logtalk.dict</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">  # rc files</span></span>
+<span class="line"><span style="color: #abb2bf">  install -Dm 644 "${srcdir}"/vimrc "${pkgdir}"/etc/vimrc</span></span>
+<span class="line"><span style="color: #abb2bf">  install -Dm 644 "${srcdir}"/archlinux.vim \</span></span>
+<span class="line"><span style="color: #abb2bf">    "${pkgdir}"/usr/share/vim/vimfiles/archlinux.vim</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">  # no desktop files and icons</span></span>
+<span class="line"><span style="color: #abb2bf">  rm -r "${pkgdir}"/usr/share/{applications,icons}</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">  # license</span></span>
+<span class="line"><span style="color: #abb2bf">  install -dm 755 "${pkgdir}"/usr/share/licenses/vim-runtime</span></span>
+<span class="line"><span style="color: #abb2bf">  ln -s /usr/share/vim/vim${_versiondir}/doc/uganda.txt \</span></span>
+<span class="line"><span style="color: #abb2bf">    "${pkgdir}"/usr/share/licenses/vim-runtime/license.txt</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">  # pacman hook for documentation helptags</span></span>
+<span class="line"><span style="color: #abb2bf">  install -Dm 644 "${srcdir}"/vimdoc.hook "${pkgdir}"/usr/share/libalpm/hooks/vimdoc.hook</span></span>
+<span class="line"><span style="color: #abb2bf">}</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">package_vim() {</span></span>
+<span class="line"><span style="color: #abb2bf">  # TODO: move perl back into optdeps after --enable-perlinterp=dynamic</span></span>
+<span class="line"><span style="color: #abb2bf">  #       starts working again (https://github.com/vim/vim/issues/10512)</span></span>
+<span class="line"><span style="color: #abb2bf">  depends=("vim-runtime=${pkgver}-${pkgrel}" 'gpm' 'acl' 'glibc' 'libgcrypt' 'zlib' 'perl')</span></span>
+<span class="line"><span style="color: #abb2bf">  optdepends=('python: Python language support'</span></span>
+<span class="line"><span style="color: #abb2bf">              'ruby: Ruby language support'</span></span>
+<span class="line"><span style="color: #abb2bf">              'lua: Lua language support'</span></span>
+<span class="line"><span style="color: #abb2bf">              #'perl: Perl language support'</span></span>
+<span class="line"><span style="color: #abb2bf">              'tcl: Tcl language support')</span></span>
+<span class="line"><span style="color: #abb2bf">  conflicts=('gvim' 'vim-minimal')</span></span>
+<span class="line"><span style="color: #abb2bf">  provides=('xxd' 'vim-minimal' 'vim-plugin-runtime')</span></span>
+<span class="line"><span style="color: #abb2bf">  replaces=('vim-minimal')</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">  cd vim-${pkgver}</span></span>
+<span class="line"><span style="color: #abb2bf">  make -j1 VIMRCLOC=/etc DESTDIR="${pkgdir}" install</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">  # provided by (n)vi in core</span></span>
+<span class="line"><span style="color: #abb2bf">  rm "${pkgdir}"/usr/bin/{ex,view}</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">  # delete some manpages</span></span>
+<span class="line"><span style="color: #abb2bf">  find "${pkgdir}"/usr/share/man -type d -name 'man1' 2>/dev/null | \</span></span>
+<span class="line"><span style="color: #abb2bf">    while read _mandir; do</span></span>
+<span class="line"><span style="color: #abb2bf">    cd "${_mandir}"</span></span>
+<span class="line"><span style="color: #abb2bf">    rm -f ex.1 view.1 # provided by (n)vi</span></span>
+<span class="line"><span style="color: #abb2bf">    rm -f evim.1    # this does not make sense if we have no GUI</span></span>
+<span class="line"><span style="color: #abb2bf">  done</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">  # Runtime provided by runtime package</span></span>
+<span class="line"><span style="color: #abb2bf">  rm -r "${pkgdir}"/usr/share/vim</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">  # remove gvim.desktop as not included</span></span>
+<span class="line"><span style="color: #abb2bf">  rm "${pkgdir}"/usr/share/applications/gvim.desktop</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">  # license</span></span>
+<span class="line"><span style="color: #abb2bf">  install -Dm 644 runtime/doc/uganda.txt \</span></span>
+<span class="line"><span style="color: #abb2bf">    "${pkgdir}"/usr/share/licenses/${pkgname}/license.txt</span></span>
+<span class="line"><span style="color: #abb2bf">}</span></span>
+<span class="line"><span style="color: #abb2bf"># vim: ts=2 sw=2 et:</span></span></code></pre>
+</details>
+<p>iii. 构建并安装：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">makepkg -si</span></span></code></pre>
+<h2 id="4-源码安装">4. 源码安装</h2>
+<ol start="0">
+<li>安装依赖</li>
+</ol>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">sudo pacman -S glibc libgcrypt gpm python ruby libxt gtk3 lua gawk tcl zlib gettext pkgconfig</span></span>
+<span class="line"><span style="color: #abb2bf"># 需要音频支持的，安装这个依赖</span></span>
+<span class="line"><span style="color: #abb2bf">sudo pacman -S libcanberra</span></span></code></pre>
+<ol>
+<li>克隆源码</li>
+</ol>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">https://github.com/vim/vim.git</span></span></code></pre>
+<ol start="2">
+<li>配置</li>
+</ol>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">./configure --prefix=/usr --localstatedir=/var/lib/vim \</span></span>
+<span class="line"><span style="color: #abb2bf">        --with-features=huge --enable-gpm --enable-acl --with-x=yes \</span></span>
+<span class="line"><span style="color: #abb2bf">        --disable-gui --enable-multibyte --enable-cscope \</span></span>
+<span class="line"><span style="color: #abb2bf">        --disable-netbeans --enable-perlinterp=dynamic \</span></span>
+<span class="line"><span style="color: #abb2bf">        --enable-python3interp=dynamic --enable-rubyinterp=dynamic \</span></span>
+<span class="line"><span style="color: #abb2bf">        --enable-luainterp=dynamic --mandir=/usr/share/man</span></span>
+<span class="line"><span style="color: #abb2bf">        #################### 需要音频支持的加入以下配置：</span></span>
+<span class="line"><span style="color: #abb2bf">        --enable--canberra</span></span></code></pre>
+<ol start="3">
+<li>编译生成</li>
+</ol>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf"># 默认生成</span></span>
+<span class="line"><span style="color: #abb2bf">make</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf"># 测试</span></span>
+<span class="line"><span style="color: #abb2bf">make test</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf"># 添加额外配置</span></span>
+<span class="line"><span style="color: #abb2bf">make reconfig</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf"># 测试</span></span>
+<span class="line"><span style="color: #abb2bf">make test</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf"># 安装</span></span>
+<span class="line"><span style="color: #abb2bf">sudo make install</span></span></code></pre>
+<h2 id="5-测试">5. 测试</h2>
+<p>查看 patch 版本及是否包含 clipboard 特性</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">$ vim --version | grep patch</span></span>
+<span class="line"><span style="color: #abb2bf">Included patches: 1-1683</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">$ vim --version | grep clipboard</span></span>
+<span class="line"><span style="color: #abb2bf">+clipboard         +keymap            +printer           +vertsplit</span></span>
+<span class="line"><span style="color: #abb2bf">+eval              -mouse_jsbterm     -sun_workshop      +xterm_clipboard</span></span></code></pre>
+<h2 id="6-参考链接">6. 参考链接</h2>
+<p><a href="https://github.com/vim/vim" rel="nofollow">https://github.com/vim/vim<span>🔗</span></a>
+<a href="https://github.com/ycm-core/YouCompleteMe/wiki/Building-Vim-from-source" rel="nofollow">https://github.com/ycm-core/YouCompleteMe/wiki/Building-Vim-from-source<span>🔗</span></a>
+<a href="https://gitlab.archlinux.org/archlinux/packaging/packages/vim/-/blob/main/PKGBUILD" rel="nofollow">https://gitlab.archlinux.org/archlinux/packaging/packages/vim/-/blob/main/PKGBUILD<span>🔗</span></a></p>
+    </article>
+    <ul class="tags-container astro-VJ4TPSPI">
+      <li class="inline-block my-1 underline-offset-4 astro-BLWJYJPT">
+  <a href="/tags/vim" class="text-sm pr-2 group astro-BLWJYJPT">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-BLWJYJPT"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">vim</span>
+  </a>
+</li>
+    </ul>
+  </main>
+  <footer class="mt-auto astro-SZ7XMLTE">
+  <div class="max-w-3xl mx-auto px-0">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+  <div class="footer-wrapper astro-SZ7XMLTE">
+    <div class="social-icons flex astro-UPU6FZXR">
+  <a href="https://github.com/baddate" tabindex="0" class="group inline-block link-button astro-UPU6FZXR astro-5EUNQZKT" title=" SMJ on Github">
+  
+        <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="icon-tabler"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path
+      d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"
+    ></path>
+  </svg>
+      
+</a><a href="https://twitter.com/realSanmoji" tabindex="0" class="group inline-block link-button astro-UPU6FZXR astro-5EUNQZKT" title="SMJ on Twitter">
+  
+        <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon-tabler"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z"></path>
+    </svg>
+      
+</a>
+</div>
+    <div class="copyright-wrapper astro-SZ7XMLTE">
+      <span class="astro-SZ7XMLTE">Copyright &#169; 2023</span>
+      <span class="separator astro-SZ7XMLTE">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE"><a href="/privacy" class="astro-SZ7XMLTE">Privacy</a></span>
+      <span class="separator astro-SZ7XMLTE">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE"><a href="/disclaimer" class="astro-SZ7XMLTE">Disclaimer</a></span>
+    </div>
+  </div>
+</footer>
+
+  </body></html>
+

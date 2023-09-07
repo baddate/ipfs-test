@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="canonical" href="https://smj.im/posts/cloudflare-tunnel-guide/">
+    <meta name="generator" content="Astro v2.2.1">
+
+    <!-- General Meta Tags -->
+    <title>Cloudflare Tunnel 不完全上手指南</title>
+    <meta name="title" content="Cloudflare Tunnel 不完全上手指南">
+    <meta name="description" content="如何使用免费的Cloudflare Tunnel进行内网穿透，把树莓派整成家用服务器，实现数据私有化。">
+    <meta name="author" content="Sanmoji">
+    <meta name="keywords" content="Linux, AI, Thinking">
+    <link rel="sitemap" href="/sitemap-index.xml">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="Cloudflare Tunnel 不完全上手指南">
+    <meta property="og:description" content="如何使用免费的Cloudflare Tunnel进行内网穿透，把树莓派整成家用服务器，实现数据私有化。">
+    <meta property="og:url" content="https://smj.im/posts/cloudflare-tunnel-guide/">
+    <meta property="og:image" content="https://smj.im/Cloudflare%20Tunnel%20%E4%B8%8D%E5%AE%8C%E5%85%A8%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://smj.im/posts/cloudflare-tunnel-guide/">
+    <meta property="twitter:title" content="Cloudflare Tunnel 不完全上手指南">
+    <meta property="twitter:description" content="如何使用免费的Cloudflare Tunnel进行内网穿透，把树莓派整成家用服务器，实现数据私有化。">
+    <meta property="twitter:image" content="https://smj.im/Cloudflare%20Tunnel%20%E4%B8%8D%E5%AE%8C%E5%85%A8%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97.png">
+
+    <!-- Umami Tracking Code -->
+    <script>(function(){const tid = "7e882ff9-48a6-48d9-9c4a-11f7c4fb671c";
+const tdomain = "um.oii.im";
+
+      // 检查是否在本地环境（假设本地环境的主机名为"localhost"或"127.0.0.1"）
+      if (
+        window.location.hostname !== "localhost" &&
+        window.location.hostname !== "127.0.0.1"
+      ) {
+        // 如果不是本地环境，则加载Umami脚本
+        const trackingURL = "https://" + tdomain + "/script.js";
+        console.log("this is not localhost");
+        // 替换 YOUR_UMAMI_WEBSITE_ID 为你自己的Umami网站ID
+        const umamiWebsiteId = { tid };
+        const umamiTrackingURL = trackingURL;
+
+        console.log(umamiWebsiteId);
+        console.log(umamiTrackingURL);
+        // 获取当前正在执行的<script>标签
+        const currentScript = document.currentScript;
+
+        // 创建并添加Umami脚本到页面
+        const umamiScript = document.createElement("script");
+        umamiScript.async = true;
+        umamiScript.defer = true;
+        umamiScript.dataset.websiteId = umamiWebsiteId.tid;
+        umamiScript.src = umamiTrackingURL;
+
+        // 在当前<script>标签之后插入新创建的<script>标签
+        currentScript.parentNode.insertBefore(
+          umamiScript,
+          currentScript.nextSibling
+        );
+      } else {
+        console.log("this is localhost");
+      }
+    })();</script>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
+    
+    <link rel="sitemap" href="/sitemap-index.xml">
+    <script src="/toggle-theme.js"></script>
+  <link rel="stylesheet" href="/_astro/about.d5105181.css" />
+<link rel="stylesheet" href="/_astro/about.6e6daff0.css" />
+<link rel="stylesheet" href="/_astro/_slug_.40cf44c5.css" />
+<link rel="stylesheet" href="/_astro/_slug_.41a32359.css" />
+<link rel="stylesheet" href="/_astro/_slug_.ad230599.css" />
+<link rel="stylesheet" href="/_astro/_slug_.906d67ca.css" /><script type="module" src="/_astro/hoisted.d675ed42.js"></script></head>
+  <body>
+    
+  <header class="astro-3EF6KSR2">
+  <a id="skip-to-content" href="#main-content" class="astro-3EF6KSR2">Skip to content</a>
+  <div class="nav-container astro-3EF6KSR2">
+    <div class="top-nav-wrap astro-3EF6KSR2">
+      <a href="/" class="logo astro-3EF6KSR2">
+        方寸之间
+      </a>
+      <nav id="nav-menu" class="astro-3EF6KSR2">
+        <button class="hamburger-menu focus-outline astro-3EF6KSR2" aria-label="Open Menu" aria-expanded="false" aria-controls="menu-items">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="menu-icon astro-3EF6KSR2">
+            <line x1="7" y1="12" x2="21" y2="12" class="line astro-3EF6KSR2"></line>
+            <line x1="3" y1="6" x2="21" y2="6" class="line astro-3EF6KSR2"></line>
+            <line x1="12" y1="18" x2="21" y2="18" class="line astro-3EF6KSR2"></line>
+            <line x1="18" y1="6" x2="6" y2="18" class="close astro-3EF6KSR2"></line>
+            <line x1="6" y1="6" x2="18" y2="18" class="close astro-3EF6KSR2"></line>
+          </svg>
+        </button>
+        <ul id="menu-items" class="display-none sm:flex astro-3EF6KSR2">
+          <li class="astro-3EF6KSR2">
+            <a href="/posts" class=" astro-3EF6KSR2">
+              Posts
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/tags" class=" astro-3EF6KSR2">
+              Tags
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/links" class=" astro-3EF6KSR2">
+              Links
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/about" class=" astro-3EF6KSR2">
+              About
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/search" tabindex="0" class="group inline-block focus-outline p-3 sm:p-1  astro-3EF6KSR2 astro-5EUNQZKT" aria-label="search" title="Search">
+  
+              <svg xmlns="http://www.w3.org/2000/svg" class="scale-125 sm:scale-100 astro-3EF6KSR2"><path d="M19.023 16.977a35.13 35.13 0 0 1-1.367-1.384c-.372-.378-.596-.653-.596-.653l-2.8-1.337A6.962 6.962 0 0 0 16 9c0-3.859-3.14-7-7-7S2 5.141 2 9s3.14 7 7 7c1.763 0 3.37-.66 4.603-1.739l1.337 2.8s.275.224.653.596c.387.363.896.854 1.384 1.367l1.358 1.392.604.646 2.121-2.121-.646-.604c-.379-.372-.885-.866-1.391-1.36zM9 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z" class="astro-3EF6KSR2"></path>
+              </svg>
+            
+</a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <button id="theme-btn" class="focus-outline astro-3EF6KSR2" title="Toggles light & dark" aria-label="auto" aria-live="polite">
+                  <svg xmlns="http://www.w3.org/2000/svg" id="moon-svg" class="astro-3EF6KSR2">
+                    <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" id="sun-svg" class="astro-3EF6KSR2">
+                    <path d="M6.993 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007S14.761 6.993 12 6.993 6.993 9.239 6.993 12zM12 8.993c1.658 0 3.007 1.349 3.007 3.007S13.658 15.007 12 15.007 8.993 13.658 8.993 12 10.342 8.993 12 8.993zM10.998 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2h-3zm17 0h3v2h-3zM4.219 18.363l2.12-2.122 1.415 1.414-2.12 2.122zM16.24 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.342 7.759 4.22 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="max-w-3xl mx-auto px-4">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+</header>
+  <div class="mx-auto flex w-full max-w-3xl justify-start px-2 astro-VJ4TPSPI">
+    <button class="focus-outline mb-2 mt-8 flex hover:opacity-75 astro-VJ4TPSPI" onclick="history.back()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="astro-VJ4TPSPI"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-VJ4TPSPI"></path>
+      </svg><span class="astro-VJ4TPSPI">Go back</span>
+    </button>
+  </div>
+  <main id="main-content" class="astro-VJ4TPSPI">
+    <h1 class="post-title astro-VJ4TPSPI">Cloudflare Tunnel 不完全上手指南</h1>
+    <div class="flex items-center space-x-2 opacity-80 my-2 astro-VJ4TPSPI"><svg xmlns="http://www.w3.org/2000/svg" class="scale-100 inline-block h-6 w-6 fill-skin-base" aria-hidden="true"><path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path><path d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z"></path></svg><span class="sr-only">Posted on:</span><span class="italic text-base">April 1, 2023<span aria-hidden="true"> | </span><span class="sr-only"> at </span>09:04 PM</span></div>
+    <article id="article" role="article" class="prose mx-auto mt-8 max-w-3xl astro-VJ4TPSPI">
+      <button class="goTopButton astro-VJ4TPSPI">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="icon-tabler astro-VJ4TPSPI" viewBox="0 0 16 16">
+          <path d="M3.204 11h9.592L8 5.519 3.204 11zm-.753-.659 4.796-5.48a1 1 0 0 1 1.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 0 1-.753-1.659z" class="astro-VJ4TPSPI"></path>
+        </svg>
+      </button>
+      <p>最近在树莓派上整了几个 web 服务，不过只能在本地使用，无法通过外网访问，所以试着使用 Cloudflare Tunnel 来进行内网穿透，这里记录下我的操作过程。</p>
+<p>我的硬件配置</p>
+<blockquote>
+<p>树莓派 4B+Ubuntu 系统</p>
+</blockquote>
+<h2 id="table-of-contents">Table of contents</h2>
+<p></p><details><summary>Open Table of contents</summary><p></p>
+<ul>
+<li>
+<p><a href="#%E5%AE%89%E8%A3%85-cloudflared">安装 cloudflared</a></p>
+<ul>
+<li><a href="#%E6%96%B9%E6%B3%95-1%E4%BD%BF%E7%94%A8-cloudflare-%E5%AD%98%E5%82%A8%E5%BA%93">方法 1：使用 Cloudflare 存储库</a></li>
+<li><a href="#%E6%96%B9%E6%B3%95-2%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8%E5%AE%98%E6%96%B9-deb-%E5%8C%85">方法 2：直接使用官方 deb 包</a></li>
+</ul>
+</li>
+<li>
+<p><a href="#%E9%85%8D%E7%BD%AE%E8%B4%A6%E5%8F%B7">配置账号</a></p>
+</li>
+<li>
+<p><a href="#%E5%88%9B%E5%BB%BA%E9%9A%A7%E9%81%93">创建隧道</a></p>
+<ul>
+<li><a href="#%E8%AF%A6%E7%BB%86%E9%85%8D%E7%BD%AE%E9%9A%A7%E9%81%93">详细配置隧道</a></li>
+</ul>
+</li>
+<li>
+<p><a href="#%E8%B7%AF%E7%94%B1%E5%86%85%E7%BD%91%E6%9C%8D%E5%8A%A1%E6%B5%81%E9%87%8F">路由内网服务流量</a></p>
+</li>
+<li>
+<p><a href="#%E8%BF%90%E8%A1%8C%E9%9A%A7%E9%81%93">运行隧道</a></p>
+</li>
+<li>
+<p><a href="#%E6%A3%80%E6%9F%A5%E9%9A%A7%E9%81%93%E5%8F%82%E6%95%B0">检查隧道参数</a></p>
+</li>
+<li>
+<p><a href="#%E5%B0%86%E9%9A%A7%E9%81%93%E4%BD%9C%E4%B8%BA%E6%9C%8D%E5%8A%A1%E8%BF%90%E8%A1%8C">将隧道作为服务运行</a></p>
+</li>
+<li>
+<p><a href="#%E8%B8%A9%E5%9D%91">踩坑</a></p>
+</li>
+<li>
+<p><a href="#%E5%8F%82%E8%80%83">参考</a></p>
+</li>
+</ul>
+<p></p></details><p></p>
+<h2 id="安装-cloudflared">安装 cloudflared</h2>
+<p>要在 Raspberry Pi 上设置 Cloudflare 隧道，我们将依赖一个名为“ <code>Cloudflared</code> ”的软件，Cloudflared 是在 本地网络 和 Cloudflare 网络之间创建和维护安全隧道的软件。有两种安装方法。</p>
+<h3 id="方法-1使用-cloudflare-存储库">方法 1：使用 Cloudflare 存储库</h3>
+<ol>
+<li>获取 Cloudflared 存储库的 GPG 密钥</li>
+</ol>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">curl -L https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-archive-keyring.gpg >/dev/null</span></span></code></pre>
+<ol start="2">
+<li>将 Cloudflared 存储库添加到软件源</li>
+</ol>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #56B6C2">echo</span><span style="color: #ABB2BF"> </span><span style="color: #98C379">"deb [signed-by=/usr/share/keyrings/cloudflare-archive-keyring.gpg] https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main"</span><span style="color: #ABB2BF"> | sudo tee  /etc/apt/sources.list.d/cloudflared.list</span></span></code></pre>
+<ol start="3">
+<li>更新软件包缓存并安装<code>cloudflared</code>：</li>
+</ol>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">sudo apt update</span></span>
+<span class="line"><span style="color: #ABB2BF">sudo apt install cloudflared</span></span></code></pre>
+<h3 id="方法-2直接使用官方-deb-包">方法 2：直接使用官方 deb 包</h3>
+<p>使用以下在 Github 的<a href="https://github.com/cloudflare/cloudflared/releases" rel="nofollow">Release<span>🔗</span></a>界面下载最新版 deb 包，并使用<code>dpkg</code>进行安装：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64.deb &#x26;&#x26; sudo dpkg -i cloudflared-linux-arm64.deb</span></span></code></pre>
+<p><em>注意树莓派 4B 安装</em><code>_arm64_</code><em>版本。</em></p>
+<h2 id="配置账号">配置账号</h2>
+<p>命令行执行以下命令，按照引导进行账号验证：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">cloudflared tunnel login</span></span></code></pre>
+<h2 id="创建隧道">创建隧道</h2>
+<p>执行以下命令，创建一个 tunnel：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">cloudflared tunnel create &#x3C;tunnel-name></span></span></code></pre>
+<p>运行上面的命令后，您将看到类似于下面的消息</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">Tunnel credentials written to /home/pi/.cloudflared/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.json. cloudflared chose this file based on where your origin certificate was found. Keep this file secret. To revoke these credentials, delete the tunnel.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #ABB2BF">Created tunnel pimytunnel with id XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX</span></span></code></pre>
+<p>这一步在创建 tunnel 的同时，还生成一个 tunnel 的 UUID，一个凭证文件以及一个<code>.cfargotunnel.com</code> 的子域名，UUID 以及凭证文件将在之后配置文件时使用，务必记住 UUID 以及凭证文件的路径（在默认路径中，后面会提到）。</p>
+<p>也使用以下命令验证是否创建成功：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">cloudflared tunnel list</span></span></code></pre>
+<h3 id="详细配置隧道">详细配置隧道</h3>
+<p>配置文件的默认路径有 3 个，分别是：</p>
+<ol>
+<li><code>~/.cloudflared</code></li>
+<li><code>/etc/cloudflared</code></li>
+<li><code>/usr/local/etc/cloudflared</code></li>
+</ol>
+<p>这里我们使用当前用户目录，即<code>~/.cloudflared</code>，我们在该目录下面创建一个配置文件，命名为<code>config.yml</code>，并填入之前创建的 tunnel 时的生成的配置信息：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">tunnel: &#x3C;Tunnel-UUID></span></span>
+<span class="line"><span style="color: #ABB2BF">credentials-file: /home/pi/.cloudflared/&#x3C;Tunnel-UUID>.json</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #ABB2BF">ingress:</span></span>
+<span class="line"><span style="color: #ABB2BF">        - hostname: test.example.com</span></span>
+<span class="line"><span style="color: #ABB2BF">          service: http://localhost:80</span></span>
+<span class="line"><span style="color: #ABB2BF">        - hostname: example.com</span></span>
+<span class="line"><span style="color: #ABB2BF">    	  service: https://localhost:8000</span></span>
+<span class="line"><span style="color: #ABB2BF">        - service: http_status:404</span></span></code></pre>
+<p>然后按照配置文件的格式配置自己的 web 服务的主机名和端口，每个规则一般包含<code>hostname</code>和<code>service</code>两部分，注意最后一行的<code>- service: http_status:404</code>，我们可以发现没有 hostname 部分，这并不是错误，而是<code>cloudflared</code>的特殊规则，主要是用来匹配所有流量，是必须要有的。</p>
+<p>这和<code>cloudflared</code>匹配规则有关，当 <code>cloudflared</code> 收到传入请求时，它会从上到下评估每个入口规则，以找到与请求匹配的规则。规则可以匹配传入请求的主机名或路径，或两者。如果所有规则都不匹配，就会匹配最后一条规则。</p>
+<h2 id="路由内网服务流量">路由内网服务流量</h2>
+<p>使用以下命令分配一个 CNAME 记录，将流量指向您的隧道子域。</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">cloudflared tunnel route dns &#x3C;UUID or NAME> &#x3C;hostname></span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #7F848E"># example</span></span>
+<span class="line"><span style="color: #ABB2BF">cloudflared tunnel route dns pi test.example.com</span></span></code></pre>
+<h2 id="运行隧道">运行隧道</h2>
+<p>执行以下命令，将 cloudflared 连接到 Cloudflare 的网络，Cloudflared 会从默认位置检索配置文件，即 <code>~/.cloudflared/config.yml</code></p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">cloudflared tunnel run &#x3C;UUID or NAME></span></span></code></pre>
+<p>如果你的配置文件不在默认路径，可以使用<code>--config</code>选项来运行隧道：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">cloudflared tunnel --config /path/your-config-file.yaml run &#x3C;UUID or NAME></span></span></code></pre>
+<h2 id="检查隧道参数">检查隧道参数</h2>
+<p>至此，隧道配置完成，可以执行下面的命令来获得刚刚创建的隧道的信息：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">cloudflared tunnel info</span></span></code></pre>
+<p>其他一些常用的命令：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Functions</th><th>Commands</th></tr></thead><tbody><tr><td>创建隧道</td><td>cloudflared tunnel run &#x3C;<em>NAME</em>></td></tr><tr><td>隧道列表</td><td>cloudflared tunnel list</td></tr><tr><td>停止隧道</td><td>cloudflared tunnel stop &#x3C;<em>NAME</em>></td></tr><tr><td>重新启动隧道</td><td>cloudflared tunnel restart &#x3C;<em>NAME</em>></td></tr><tr><td>删除隧道</td><td>cloudflared tunnel delete &#x3C;<em>NAME</em>></td></tr><tr><td>强制删除隧道</td><td>cloudflared tunnel delete -f &#x3C;<em>NAME</em>></td></tr><tr><td>显示隧道信息</td><td>cloudflared tunnel info &#x3C;<em>NAME</em>></td></tr></tbody></table>
+<h2 id="将隧道作为服务运行">将隧道作为服务运行</h2>
+<p>将 Tunnel 安装为系统服务，允许 Tunnel 在启动时作为启动守护进程自动运行。默认情况下，Tunnel 希望在默认目录 <code>~/.cloudflared/config.yml</code> 中找到配置文件，但要将 Tunnel 作为服务运行，我们需要将 config.yml 文件移动到 <code>~/etc/cloudflared/</code> 中。</p>
+<p>使用 <code>mv</code> 命令来移动配置文件</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">sudo mv /home/pi/.cloudflared/config.yml /etc/cloudflared/</span></span></code></pre>
+<p>然后执行以下命令安装服务：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">sudo cloudflared service install</span></span></code></pre>
+<p>启动服务：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">systemctl start cloudflared</span></span></code></pre>
+<p>检查服务运行状态：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">systemctl status cloudflared</span></span></code></pre>
+<h2 id="踩坑">踩坑</h2>
+<p>启动隧道服务时遇到的一个问题：</p>
+<blockquote>
+<p>failed to sufficiently increase receive buffer size (was: 208 kiB, wanted: 2048 kiB, got: 416 kiB).</p>
+</blockquote>
+<p>解决方法：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">sudo sysctl -w net.core.rmem_max=2500000</span></span></code></pre>
+<h2 id="参考">参考</h2>
+<p><a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/" rel="nofollow">https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/<span>🔗</span></a></p>
+<p><a href="https://github.com/quic-go/quic-go/wiki/UDP-Receive-Buffer-Size" rel="nofollow">https://github.com/quic-go/quic-go/wiki/UDP-Receive-Buffer-Size<span>🔗</span></a></p>
+    </article>
+    <ul class="tags-container astro-VJ4TPSPI">
+      <li class="inline-block my-1 underline-offset-4 astro-BLWJYJPT">
+  <a href="/tags/cloudflare" class="text-sm pr-2 group astro-BLWJYJPT">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-BLWJYJPT"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">cloudflare</span>
+  </a>
+</li><li class="inline-block my-1 underline-offset-4 astro-BLWJYJPT">
+  <a href="/tags/tunnel" class="text-sm pr-2 group astro-BLWJYJPT">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-BLWJYJPT"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">tunnel</span>
+  </a>
+</li>
+    </ul>
+  </main>
+  <footer class="mt-auto astro-SZ7XMLTE">
+  <div class="max-w-3xl mx-auto px-0">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+  <div class="footer-wrapper astro-SZ7XMLTE">
+    <div class="social-icons flex astro-UPU6FZXR">
+  <a href="https://github.com/baddate" tabindex="0" class="group inline-block link-button astro-UPU6FZXR astro-5EUNQZKT" title=" SMJ on Github">
+  
+        <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="icon-tabler"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path
+      d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"
+    ></path>
+  </svg>
+      
+</a><a href="https://twitter.com/realSanmoji" tabindex="0" class="group inline-block link-button astro-UPU6FZXR astro-5EUNQZKT" title="SMJ on Twitter">
+  
+        <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon-tabler"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z"></path>
+    </svg>
+      
+</a>
+</div>
+    <div class="copyright-wrapper astro-SZ7XMLTE">
+      <span class="astro-SZ7XMLTE">Copyright &#169; 2023</span>
+      <span class="separator astro-SZ7XMLTE">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE"><a href="/privacy" class="astro-SZ7XMLTE">Privacy</a></span>
+      <span class="separator astro-SZ7XMLTE">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE"><a href="/disclaimer" class="astro-SZ7XMLTE">Disclaimer</a></span>
+    </div>
+  </div>
+</footer>
+
+  </body></html>
+

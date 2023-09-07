@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="canonical" href="https://smj.im/posts/django-timezone-error-solution/">
+    <meta name="generator" content="Astro v2.2.1">
+
+    <!-- General Meta Tags -->
+    <title>Django项目时区更改错误的解决方案</title>
+    <meta name="title" content="Django项目时区更改错误的解决方案">
+    <meta name="description" content="记录我在更改时区时踩到的坑和解决方案，以及一点小小的感想。">
+    <meta name="author" content="Sanmoji">
+    <meta name="keywords" content="Linux, AI, Thinking">
+    <link rel="sitemap" href="/sitemap-index.xml">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="Django项目时区更改错误的解决方案">
+    <meta property="og:description" content="记录我在更改时区时踩到的坑和解决方案，以及一点小小的感想。">
+    <meta property="og:url" content="https://smj.im/posts/django-timezone-error-solution/">
+    <meta property="og:image" content="https://smj.im/Django%E9%A1%B9%E7%9B%AE%E6%97%B6%E5%8C%BA%E6%9B%B4%E6%94%B9%E9%94%99%E8%AF%AF%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://smj.im/posts/django-timezone-error-solution/">
+    <meta property="twitter:title" content="Django项目时区更改错误的解决方案">
+    <meta property="twitter:description" content="记录我在更改时区时踩到的坑和解决方案，以及一点小小的感想。">
+    <meta property="twitter:image" content="https://smj.im/Django%E9%A1%B9%E7%9B%AE%E6%97%B6%E5%8C%BA%E6%9B%B4%E6%94%B9%E9%94%99%E8%AF%AF%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.png">
+
+    <!-- Umami Tracking Code -->
+    <script>(function(){const tid = "7e882ff9-48a6-48d9-9c4a-11f7c4fb671c";
+const tdomain = "um.oii.im";
+
+      // 检查是否在本地环境（假设本地环境的主机名为"localhost"或"127.0.0.1"）
+      if (
+        window.location.hostname !== "localhost" &&
+        window.location.hostname !== "127.0.0.1"
+      ) {
+        // 如果不是本地环境，则加载Umami脚本
+        const trackingURL = "https://" + tdomain + "/script.js";
+        console.log("this is not localhost");
+        // 替换 YOUR_UMAMI_WEBSITE_ID 为你自己的Umami网站ID
+        const umamiWebsiteId = { tid };
+        const umamiTrackingURL = trackingURL;
+
+        console.log(umamiWebsiteId);
+        console.log(umamiTrackingURL);
+        // 获取当前正在执行的<script>标签
+        const currentScript = document.currentScript;
+
+        // 创建并添加Umami脚本到页面
+        const umamiScript = document.createElement("script");
+        umamiScript.async = true;
+        umamiScript.defer = true;
+        umamiScript.dataset.websiteId = umamiWebsiteId.tid;
+        umamiScript.src = umamiTrackingURL;
+
+        // 在当前<script>标签之后插入新创建的<script>标签
+        currentScript.parentNode.insertBefore(
+          umamiScript,
+          currentScript.nextSibling
+        );
+      } else {
+        console.log("this is localhost");
+      }
+    })();</script>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
+    
+    <link rel="sitemap" href="/sitemap-index.xml">
+    <script src="/toggle-theme.js"></script>
+  <link rel="stylesheet" href="/_astro/about.d5105181.css" />
+<link rel="stylesheet" href="/_astro/about.6e6daff0.css" />
+<link rel="stylesheet" href="/_astro/_slug_.40cf44c5.css" />
+<link rel="stylesheet" href="/_astro/_slug_.41a32359.css" />
+<link rel="stylesheet" href="/_astro/_slug_.ad230599.css" />
+<link rel="stylesheet" href="/_astro/_slug_.906d67ca.css" /><script type="module" src="/_astro/hoisted.d675ed42.js"></script></head>
+  <body>
+    
+  <header class="astro-3EF6KSR2">
+  <a id="skip-to-content" href="#main-content" class="astro-3EF6KSR2">Skip to content</a>
+  <div class="nav-container astro-3EF6KSR2">
+    <div class="top-nav-wrap astro-3EF6KSR2">
+      <a href="/" class="logo astro-3EF6KSR2">
+        方寸之间
+      </a>
+      <nav id="nav-menu" class="astro-3EF6KSR2">
+        <button class="hamburger-menu focus-outline astro-3EF6KSR2" aria-label="Open Menu" aria-expanded="false" aria-controls="menu-items">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="menu-icon astro-3EF6KSR2">
+            <line x1="7" y1="12" x2="21" y2="12" class="line astro-3EF6KSR2"></line>
+            <line x1="3" y1="6" x2="21" y2="6" class="line astro-3EF6KSR2"></line>
+            <line x1="12" y1="18" x2="21" y2="18" class="line astro-3EF6KSR2"></line>
+            <line x1="18" y1="6" x2="6" y2="18" class="close astro-3EF6KSR2"></line>
+            <line x1="6" y1="6" x2="18" y2="18" class="close astro-3EF6KSR2"></line>
+          </svg>
+        </button>
+        <ul id="menu-items" class="display-none sm:flex astro-3EF6KSR2">
+          <li class="astro-3EF6KSR2">
+            <a href="/posts" class=" astro-3EF6KSR2">
+              Posts
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/tags" class=" astro-3EF6KSR2">
+              Tags
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/links" class=" astro-3EF6KSR2">
+              Links
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/about" class=" astro-3EF6KSR2">
+              About
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/search" tabindex="0" class="group inline-block focus-outline p-3 sm:p-1  astro-3EF6KSR2 astro-5EUNQZKT" aria-label="search" title="Search">
+  
+              <svg xmlns="http://www.w3.org/2000/svg" class="scale-125 sm:scale-100 astro-3EF6KSR2"><path d="M19.023 16.977a35.13 35.13 0 0 1-1.367-1.384c-.372-.378-.596-.653-.596-.653l-2.8-1.337A6.962 6.962 0 0 0 16 9c0-3.859-3.14-7-7-7S2 5.141 2 9s3.14 7 7 7c1.763 0 3.37-.66 4.603-1.739l1.337 2.8s.275.224.653.596c.387.363.896.854 1.384 1.367l1.358 1.392.604.646 2.121-2.121-.646-.604c-.379-.372-.885-.866-1.391-1.36zM9 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z" class="astro-3EF6KSR2"></path>
+              </svg>
+            
+</a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <button id="theme-btn" class="focus-outline astro-3EF6KSR2" title="Toggles light & dark" aria-label="auto" aria-live="polite">
+                  <svg xmlns="http://www.w3.org/2000/svg" id="moon-svg" class="astro-3EF6KSR2">
+                    <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" id="sun-svg" class="astro-3EF6KSR2">
+                    <path d="M6.993 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007S14.761 6.993 12 6.993 6.993 9.239 6.993 12zM12 8.993c1.658 0 3.007 1.349 3.007 3.007S13.658 15.007 12 15.007 8.993 13.658 8.993 12 10.342 8.993 12 8.993zM10.998 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2h-3zm17 0h3v2h-3zM4.219 18.363l2.12-2.122 1.415 1.414-2.12 2.122zM16.24 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.342 7.759 4.22 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="max-w-3xl mx-auto px-4">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+</header>
+  <div class="mx-auto flex w-full max-w-3xl justify-start px-2 astro-VJ4TPSPI">
+    <button class="focus-outline mb-2 mt-8 flex hover:opacity-75 astro-VJ4TPSPI" onclick="history.back()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="astro-VJ4TPSPI"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-VJ4TPSPI"></path>
+      </svg><span class="astro-VJ4TPSPI">Go back</span>
+    </button>
+  </div>
+  <main id="main-content" class="astro-VJ4TPSPI">
+    <h1 class="post-title astro-VJ4TPSPI">Django项目时区更改错误的解决方案</h1>
+    <div class="flex items-center space-x-2 opacity-80 my-2 astro-VJ4TPSPI"><svg xmlns="http://www.w3.org/2000/svg" class="scale-100 inline-block h-6 w-6 fill-skin-base" aria-hidden="true"><path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path><path d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z"></path></svg><span class="sr-only">Posted on:</span><span class="italic text-base">March 4, 2022<span aria-hidden="true"> | </span><span class="sr-only"> at </span>10:03 AM</span></div>
+    <article id="article" role="article" class="prose mx-auto mt-8 max-w-3xl astro-VJ4TPSPI">
+      <button class="goTopButton astro-VJ4TPSPI">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="icon-tabler astro-VJ4TPSPI" viewBox="0 0 16 16">
+          <path d="M3.204 11h9.592L8 5.519 3.204 11zm-.753-.659 4.796-5.48a1 1 0 0 1 1.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 0 1-.753-1.659z" class="astro-VJ4TPSPI"></path>
+        </svg>
+      </button>
+      <h3 id="tldr"><strong>TL;DR</strong></h3>
+<ol>
+<li>修改 Django 项目的<code>TIME_ZONE</code>设置为<code>Asia/Shanghai</code></li>
+<li>填充 MySQL 时区表：<code>mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql</code></li>
+<li>向 MySQL 全局配置文件的<code>mysqld</code>中添加<code>default-time-zone='Asia/Shanghai'</code>；或者在 MySQL shell 中执行<code>SET GLOBAL time_zone = 'Asia/Shanghai';</code></li>
+<li>向 Django 项目设置中的<code>DATABASES</code>字段添加时区，并设置为<code>Asia/Shanghai</code></li>
+<li>(optional)更新已经存在数据的时间：<code>update blog_article set column_name=DATE_ADD(column_name, INTERVAL 8 HOUR);</code></li>
+</ol>
+<h3 id="正文">正文</h3>
+<h3 id="起因">起因</h3>
+<p>今天在博客迁移服务器之后，突然想起来之前部署的时候，使用的是之前服务器的时区（UTC），没有使用 CST，就想着把时区改一下，不然挺不方便，而且看着挺难受的。修改的时候碰到了一些问题，这里记录一下解决方案以及一些个人感想。</p>
+<h3 id="尝试">尝试</h3>
+<p>最开始，我觉得修改时区应该很简单，直接修改一下 Django 的时区设置即可。然而一个报错直接给我整不会了。</p>
+<p><img src="https://cdn.staticaly.com/gh/baddate/pichost@master/blog/timezone-error.3r6sooz2g7k0.webp" alt="https://cdn.staticaly.com/gh/baddate/pichost@master/blog/timezone-error.3r6sooz2g7k0.webp"></p>
+<p>根据错误提示，我推测应该是 MySQL 的时区设置也不对，也要更新一下时区，然后直接在 mysql 配置文件中设置了 CST 时区：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">default-time-zone='Asia/Shanghai'</span></span></code></pre>
+<p>重启 MySQL，竟然失败了？！！！</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">Restarting mysql (via systemctl): mysql.serviceJob for mysql.service failed because the control process exited with error code.</span></span>
+<span class="line"><span style="color: #abb2bf">See "systemctl status mysql.service" and "journalctl -xe" for details.</span></span>
+<span class="line"><span style="color: #abb2bf"> failed!</span></span></code></pre>
+<p>不知道什么原因，这个方法不行，就在网上找到了另一个如何设置 MySQL 时区的<a href="https://stackoverflow.com/questions/930900/how-do-i-set-the-time-zone-of-mysql" rel="nofollow">答案<span>🔗</span></a>，发现了另一种解决方法，在 MySQL 的 shell 中更新全局变量<code>@@global.time_zone</code>。所以删除了之前添加的时区配置，进入 MySQL shell 中进行设置：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">SET @@global.time_zone = '+08:00';</span></span></code></pre>
+<p>然后，输出时区设置：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">    mysql> SELECT @@global.time_zone;</span></span>
+<span class="line"><span style="color: #abb2bf">    +--------------------+</span></span>
+<span class="line"><span style="color: #abb2bf">    | @@global.time_zone |</span></span>
+<span class="line"><span style="color: #abb2bf">    +--------------------+</span></span>
+<span class="line"><span style="color: #abb2bf">    | +08:00             |</span></span>
+<span class="line"><span style="color: #abb2bf">    +--------------------+</span></span>
+<span class="line"><span style="color: #abb2bf">    1 row in set (0.00 sec)</span></span></code></pre>
+<p>感觉设置成功了，然后尝试运行服务，发现还是同样的错误。明明时区设置成功了，为什么不生效呢？</p>
+<h3 id="答案">答案？</h3>
+<p>然后突然想到一个问题，我直接 Google 报错信息不就行了？果然，立刻就发现了一个<a href="https://stackoverflow.com/questions/40792628/django-mysql-database-returned-an-invalid-datetime-value" rel="nofollow">答案<span>🔗</span></a>，直接使用这个命令就能搞定：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql</span></span></code></pre>
+<p>动手试了一下，发现还真的可以，只不过会提示一些 Warning 信息：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">    Warning: Unable to load '/usr/share/zoneinfo/iso3166.tab' as time zone. Skipping it.</span></span>
+<span class="line"><span style="color: #abb2bf">    Warning: Unable to load '/usr/share/zoneinfo/leap-seconds.list' as time zone. Skipping it.</span></span>
+<span class="line"><span style="color: #abb2bf">    Warning: Unable to load '/usr/share/zoneinfo/leapseconds' as time zone. Skipping it.</span></span>
+<span class="line"><span style="color: #abb2bf">    Warning: Unable to load '/usr/share/zoneinfo/tzdata.zi' as time zone. Skipping it.</span></span>
+<span class="line"><span style="color: #abb2bf">    Warning: Unable to load '/usr/share/zoneinfo/zone.tab' as time zone. Skipping it.</span></span>
+<span class="line"><span style="color: #abb2bf">    Warning: Unable to load '/usr/share/zoneinfo/zone1970.tab' as time zone. Skipping it.</span></span></code></pre>
+<p>问题来了，为什么呢？虽然这样可以，但是不知道原因，心里有点不舒服，所以就查了官方文档。然后在<a href="https://dev.mysql.com/doc/refman/8.0/en/time-zone-support.html" rel="nofollow">这里<span>🔗</span></a>中找到了答案：</p>
+<blockquote>
+<p>Several tables in the mysql system schema exist to store time zone information . The MySQL installation procedure creates the time zone tables, but does not load them. To do so manually, use the following instructions.</p>
+</blockquote>
+<p>根据上面这句话我们可以很容易发现，MySQL 安装过程创建时区表，但不会加载它们，需要我们手动加载。加载方法也很简单，就是我们上面提到的那行命令：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p mysql</span></span></code></pre>
+<p>其中，<code>mysql_tzinfo_to_sql</code>y 用来读取系统的时区文件并从中生成 SQL 语句。 <code>mysql</code>y 用来处理这些语句以加载时区表。</p>
+<p>有一点要注意的是，上面的命令会加载<code>/usr/share/zoneinfo</code>下的所有时区信息，所以如果你不想这样的话，也可以选择加载自己需要的时区，命令的基本格式是：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">mysql_tzinfo_to_sql tz_file tz_name | mysql -u root -p mysql</span></span></code></pre>
+<p>比如：只加载<code>Asia/Shanghai</code>时区，可以使用下面的命令：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">mysql_tzinfo_to_sql /usr/share/zoneinfo/Asia/Shanghai ‘Asia/Shanghai’ | mysql -u root -p mysql</span></span></code></pre>
+<p>在更新时区表后，重新启动<code>mysqld</code>以确保它不会继续提供过时的时区配置。</p>
+<p>然后在 MySQL shell 中确认一下是否成功：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">    mysql> SELECT * FROM mysql.time_zone_name;</span></span>
+<span class="line"><span style="color: #abb2bf">    +---------------+--------------+</span></span>
+<span class="line"><span style="color: #abb2bf">    | Name          | Time_zone_id |</span></span>
+<span class="line"><span style="color: #abb2bf">    +---------------+--------------+</span></span>
+<span class="line"><span style="color: #abb2bf">    | Asia/Shanghai |         1    |</span></span>
+<span class="line"><span style="color: #abb2bf">    +---------------+--------------+</span></span>
+<span class="line"><span style="color: #abb2bf">    1 row in set (0.01 sec)</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">    mysql> SELECT @@global.time_zone;</span></span>
+<span class="line"><span style="color: #abb2bf">    +--------------------+</span></span>
+<span class="line"><span style="color: #abb2bf">    | @@global.time_zone |</span></span>
+<span class="line"><span style="color: #abb2bf">    +--------------------+</span></span>
+<span class="line"><span style="color: #abb2bf">    | Asia/Shanghai      |</span></span>
+<span class="line"><span style="color: #abb2bf">    +--------------------+</span></span>
+<span class="line"><span style="color: #abb2bf">    1 row in set (0.00 sec)</span></span></code></pre>
+<p>更新完 MySQL 时区设置，然后重新进入 admin 界面，时间已经改变成了 CST 时区时间。</p>
+<p>此外，在文档中我还找到了设置时区为<code>Asia/Shanghai</code>导致 MySQL 启动失败的原因：</p>
+<blockquote>
+<p>Note</p>
+<p>Named time zones can be used only if <strong>the time zone information tables in the</strong> <code>**mysql**</code> <strong>database</strong> have been created and populated. Otherwise, use of a named time zone results in an error:</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">mysql> SET time_zone = 'UTC';</span></span>
+<span class="line"><span style="color: #abb2bf">ERROR 1298 (HY000): Unknown or incorrect time zone: 'UTC'</span></span></code></pre>
+</blockquote>
+<p>我们从上面的粗体部分可以发现：之前之所以设置<code>Asia/Shanghai</code>不生效是因为**MySQL 仅当数据库中的时区信息表已创建并填充时，才能使用命名时区。**因为刚开始没有填充时区表，MySQL 不知道 Asia/Shanghai 代表什么意思，所以才会出错无法启动 MySQL 服务。</p>
+<h3 id="测试">测试</h3>
+<p>尝试创建了一篇文章，发现时间也是对的，感觉到这里应该没什么问题了。但是，有点强迫症的我还是进入 MySQL 查看了一下数据，结果。。。数据库中的时间竟然还是 UTC 时间？？</p>
+<p>虽然还是没有成功，但是现在有一点可以确认的是，MySQL 的配置已经没有了问题，所以失败的原因出在了 Django 配置上。然后直接查看官方文档，在<a href="https://docs.djangoproject.com/en/4.0/topics/i18n/timezones/" rel="nofollow">其中<span>🔗</span></a>找到了原因。</p>
+<blockquote>
+<p>When support for time zones is enabled, Django stores datetime information in UTC in the database, uses time-zone-aware datetime objects internally, and translates them to the end user’s time zone in templates and forms.</p>
+</blockquote>
+<p>换句话说，只要是项目使用时区支持，那么，无论你设置什么时区，Django 在数据库中存储数据默认都是使用 UTC 时间。所以，如果想要更改 Django 存储数据的时区，还需要在 setting 中的 <code>DATABASES</code> 里，将<code>TIME_ZONE</code>选项设置为你想要的时区。</p>
+<p>更新了 Django 项目的配置，然后重新启动，进入 admin 界面，时间没问题，然后进入 MySQL shell 查看时间列，也没问题。终于，终于成功了！！！</p>
+<h3 id="收尾">收尾</h3>
+<p>当然，还有一步，那就是更新 MySQL 数据库中已经存在的数据的时间，这个直接在原来的时间上加 8 小时即可：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">update blog_article set column_name=DATE_ADD(column_name, INTERVAL 8 HOUR);</span></span></code></pre>
+<h3 id="想法">想法</h3>
+<p>最后，虽然这只是个小问题，也解决了，但是也让我有点意识到了自己的一些不好的思维方式，本来只需要直接查找一下类似的错误，很快就能找到解决方案。</p>
+    </article>
+    <ul class="tags-container astro-VJ4TPSPI">
+      <li class="inline-block my-1 underline-offset-4 astro-BLWJYJPT">
+  <a href="/tags/django" class="text-sm pr-2 group astro-BLWJYJPT">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-BLWJYJPT"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">django</span>
+  </a>
+</li>
+    </ul>
+  </main>
+  <footer class="mt-auto astro-SZ7XMLTE">
+  <div class="max-w-3xl mx-auto px-0">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+  <div class="footer-wrapper astro-SZ7XMLTE">
+    <div class="social-icons flex astro-UPU6FZXR">
+  <a href="https://github.com/baddate" tabindex="0" class="group inline-block link-button astro-UPU6FZXR astro-5EUNQZKT" title=" SMJ on Github">
+  
+        <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="icon-tabler"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path
+      d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"
+    ></path>
+  </svg>
+      
+</a><a href="https://twitter.com/realSanmoji" tabindex="0" class="group inline-block link-button astro-UPU6FZXR astro-5EUNQZKT" title="SMJ on Twitter">
+  
+        <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon-tabler"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z"></path>
+    </svg>
+      
+</a>
+</div>
+    <div class="copyright-wrapper astro-SZ7XMLTE">
+      <span class="astro-SZ7XMLTE">Copyright &#169; 2023</span>
+      <span class="separator astro-SZ7XMLTE">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE"><a href="/privacy" class="astro-SZ7XMLTE">Privacy</a></span>
+      <span class="separator astro-SZ7XMLTE">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE"><a href="/disclaimer" class="astro-SZ7XMLTE">Disclaimer</a></span>
+    </div>
+  </div>
+</footer>
+
+  </body></html>
+

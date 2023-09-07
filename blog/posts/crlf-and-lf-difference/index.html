@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="canonical" href="https://smj.im/posts/crlf-and-lf-difference/">
+    <meta name="generator" content="Astro v2.2.1">
+
+    <!-- General Meta Tags -->
+    <title>CRLF和LF之间的区别与联系</title>
+    <meta name="title" content="CRLF和LF之间的区别与联系">
+    <meta name="description" content="大多数人应该对这两个并不陌生，但是你有深入了解过这两个概念吗？今天我们通过这篇来深入探讨一下，希望你读完这篇文章之后不会再感到困扰。">
+    <meta name="author" content="Sanmoji">
+    <meta name="keywords" content="Linux, AI, Thinking">
+    <link rel="sitemap" href="/sitemap-index.xml">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="CRLF和LF之间的区别与联系">
+    <meta property="og:description" content="大多数人应该对这两个并不陌生，但是你有深入了解过这两个概念吗？今天我们通过这篇来深入探讨一下，希望你读完这篇文章之后不会再感到困扰。">
+    <meta property="og:url" content="https://smj.im/posts/crlf-and-lf-difference/">
+    <meta property="og:image" content="https://smj.im/CRLF%E5%92%8CLF%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://smj.im/posts/crlf-and-lf-difference/">
+    <meta property="twitter:title" content="CRLF和LF之间的区别与联系">
+    <meta property="twitter:description" content="大多数人应该对这两个并不陌生，但是你有深入了解过这两个概念吗？今天我们通过这篇来深入探讨一下，希望你读完这篇文章之后不会再感到困扰。">
+    <meta property="twitter:image" content="https://smj.im/CRLF%E5%92%8CLF%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB.png">
+
+    <!-- Umami Tracking Code -->
+    <script>(function(){const tid = "7e882ff9-48a6-48d9-9c4a-11f7c4fb671c";
+const tdomain = "um.oii.im";
+
+      // 检查是否在本地环境（假设本地环境的主机名为"localhost"或"127.0.0.1"）
+      if (
+        window.location.hostname !== "localhost" &&
+        window.location.hostname !== "127.0.0.1"
+      ) {
+        // 如果不是本地环境，则加载Umami脚本
+        const trackingURL = "https://" + tdomain + "/script.js";
+        console.log("this is not localhost");
+        // 替换 YOUR_UMAMI_WEBSITE_ID 为你自己的Umami网站ID
+        const umamiWebsiteId = { tid };
+        const umamiTrackingURL = trackingURL;
+
+        console.log(umamiWebsiteId);
+        console.log(umamiTrackingURL);
+        // 获取当前正在执行的<script>标签
+        const currentScript = document.currentScript;
+
+        // 创建并添加Umami脚本到页面
+        const umamiScript = document.createElement("script");
+        umamiScript.async = true;
+        umamiScript.defer = true;
+        umamiScript.dataset.websiteId = umamiWebsiteId.tid;
+        umamiScript.src = umamiTrackingURL;
+
+        // 在当前<script>标签之后插入新创建的<script>标签
+        currentScript.parentNode.insertBefore(
+          umamiScript,
+          currentScript.nextSibling
+        );
+      } else {
+        console.log("this is localhost");
+      }
+    })();</script>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
+    
+    <link rel="sitemap" href="/sitemap-index.xml">
+    <script src="/toggle-theme.js"></script>
+  <link rel="stylesheet" href="/_astro/about.d5105181.css" />
+<link rel="stylesheet" href="/_astro/about.6e6daff0.css" />
+<link rel="stylesheet" href="/_astro/_slug_.40cf44c5.css" />
+<link rel="stylesheet" href="/_astro/_slug_.41a32359.css" />
+<link rel="stylesheet" href="/_astro/_slug_.ad230599.css" />
+<link rel="stylesheet" href="/_astro/_slug_.906d67ca.css" /><script type="module" src="/_astro/hoisted.d675ed42.js"></script></head>
+  <body>
+    
+  <header class="astro-3EF6KSR2">
+  <a id="skip-to-content" href="#main-content" class="astro-3EF6KSR2">Skip to content</a>
+  <div class="nav-container astro-3EF6KSR2">
+    <div class="top-nav-wrap astro-3EF6KSR2">
+      <a href="/" class="logo astro-3EF6KSR2">
+        方寸之间
+      </a>
+      <nav id="nav-menu" class="astro-3EF6KSR2">
+        <button class="hamburger-menu focus-outline astro-3EF6KSR2" aria-label="Open Menu" aria-expanded="false" aria-controls="menu-items">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="menu-icon astro-3EF6KSR2">
+            <line x1="7" y1="12" x2="21" y2="12" class="line astro-3EF6KSR2"></line>
+            <line x1="3" y1="6" x2="21" y2="6" class="line astro-3EF6KSR2"></line>
+            <line x1="12" y1="18" x2="21" y2="18" class="line astro-3EF6KSR2"></line>
+            <line x1="18" y1="6" x2="6" y2="18" class="close astro-3EF6KSR2"></line>
+            <line x1="6" y1="6" x2="18" y2="18" class="close astro-3EF6KSR2"></line>
+          </svg>
+        </button>
+        <ul id="menu-items" class="display-none sm:flex astro-3EF6KSR2">
+          <li class="astro-3EF6KSR2">
+            <a href="/posts" class=" astro-3EF6KSR2">
+              Posts
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/tags" class=" astro-3EF6KSR2">
+              Tags
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/links" class=" astro-3EF6KSR2">
+              Links
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/about" class=" astro-3EF6KSR2">
+              About
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/search" tabindex="0" class="group inline-block focus-outline p-3 sm:p-1  astro-3EF6KSR2 astro-5EUNQZKT" aria-label="search" title="Search">
+  
+              <svg xmlns="http://www.w3.org/2000/svg" class="scale-125 sm:scale-100 astro-3EF6KSR2"><path d="M19.023 16.977a35.13 35.13 0 0 1-1.367-1.384c-.372-.378-.596-.653-.596-.653l-2.8-1.337A6.962 6.962 0 0 0 16 9c0-3.859-3.14-7-7-7S2 5.141 2 9s3.14 7 7 7c1.763 0 3.37-.66 4.603-1.739l1.337 2.8s.275.224.653.596c.387.363.896.854 1.384 1.367l1.358 1.392.604.646 2.121-2.121-.646-.604c-.379-.372-.885-.866-1.391-1.36zM9 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z" class="astro-3EF6KSR2"></path>
+              </svg>
+            
+</a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <button id="theme-btn" class="focus-outline astro-3EF6KSR2" title="Toggles light & dark" aria-label="auto" aria-live="polite">
+                  <svg xmlns="http://www.w3.org/2000/svg" id="moon-svg" class="astro-3EF6KSR2">
+                    <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" id="sun-svg" class="astro-3EF6KSR2">
+                    <path d="M6.993 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007S14.761 6.993 12 6.993 6.993 9.239 6.993 12zM12 8.993c1.658 0 3.007 1.349 3.007 3.007S13.658 15.007 12 15.007 8.993 13.658 8.993 12 10.342 8.993 12 8.993zM10.998 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2h-3zm17 0h3v2h-3zM4.219 18.363l2.12-2.122 1.415 1.414-2.12 2.122zM16.24 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.342 7.759 4.22 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="max-w-3xl mx-auto px-4">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+</header>
+  <div class="mx-auto flex w-full max-w-3xl justify-start px-2 astro-VJ4TPSPI">
+    <button class="focus-outline mb-2 mt-8 flex hover:opacity-75 astro-VJ4TPSPI" onclick="history.back()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="astro-VJ4TPSPI"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-VJ4TPSPI"></path>
+      </svg><span class="astro-VJ4TPSPI">Go back</span>
+    </button>
+  </div>
+  <main id="main-content" class="astro-VJ4TPSPI">
+    <h1 class="post-title astro-VJ4TPSPI">CRLF和LF之间的区别与联系</h1>
+    <div class="flex items-center space-x-2 opacity-80 my-2 astro-VJ4TPSPI"><svg xmlns="http://www.w3.org/2000/svg" class="scale-100 inline-block h-6 w-6 fill-skin-base" aria-hidden="true"><path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path><path d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z"></path></svg><span class="sr-only">Posted on:</span><span class="italic text-base">June 14, 2021<span aria-hidden="true"> | </span><span class="sr-only"> at </span>06:52 PM</span></div>
+    <article id="article" role="article" class="prose mx-auto mt-8 max-w-3xl astro-VJ4TPSPI">
+      <button class="goTopButton astro-VJ4TPSPI">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="icon-tabler astro-VJ4TPSPI" viewBox="0 0 16 16">
+          <path d="M3.204 11h9.592L8 5.519 3.204 11zm-.753-.659 4.796-5.48a1 1 0 0 1 1.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 0 1-.753-1.659z" class="astro-VJ4TPSPI"></path>
+        </svg>
+      </button>
+      <h2 id="crlf-与-lf换行到底是什么">CRLF 与 LF：换行到底是什么？</h2>
+<p>要真正理解 CRLF 与 LF 换行的问题，我们需要复习一些排版历史。</p>
+<p>人们使用字母、数字和符号来相互交流。但是计算机只能理解和处理数字。由于计算机上的文件由人类可读的字符串组成，因此我们需要一个允许我们在这两种格式之间来回转换的系统。 ASCII 标准就是这样的系统——它将 A 和 z 等字符映射到数字，弥合了人类语言和计算机语言之间的鸿沟。</p>
+<p>有趣的是，ASCII 标准不仅仅适用于字母和数字等可见字符。某个子集是控制字符，也称为非打印字符。它们不用于渲染可见字符；相反，它们用于执行独特的操作，例如删除前一个字符或插入换行符。</p>
+<p>LF 和 CR 就是两个这样的控制字符，它们都与文件中的行尾有关。它们的历史可以追溯到打字机时代，因此我将简要介绍其工作原理，以便了解为什么我们有两个不同的控制字符而不是一个。然后，我们将看看这如何影响开发人员的体验。</p>
+<h3 id="lf换行">LF：换行</h3>
+<p><strong>LF</strong>（Line Feed）代表“换行”，但你可能更熟悉术语换行符（转义序列 \n）。简单地说，这个字符代表一行文本的结束。在 Linux 和 Mac 上，这相当于新文本行的开始。这种区别很重要，因为 Windows 不遵循此约定。我们了解回车之后再讨论为什么不同。</p>
+<h3 id="cr回车">CR：回车</h3>
+<p><strong>CR</strong>（Carriage Return）代表回车（转义序列\r），将光标移动到当前行的开头。终端上的下载进度条就是通过 CR 实现的，通过使用回车符，你的终端可以通过将光标返回到当前行的开头并覆盖任何先前呈现的文本来将文本动画化。</p>
+<h4 id="打字机和回车cr">打字机和回车（CR）</h4>
+<p>将一张纸固定在称为托架的机械卷上，为设备送入一张纸。每次击键时，打字机都会使用墨水在您的纸张上打印字母，将笔架向左移动以确保键入的下一个字母会出现在前一个字母的右侧。</p>
+<p>当然，一旦当前行的空间用完，打字员就需要向下移动到纸张上的下一行。这是通过旋转滑架将纸张相对于打字机的“笔”向上移动一定距离来完成的。但是还需要重置托架（carriage），以便键入的下一个字符将与纸张的左侧边距对齐。换句话说，打字员需要某种方式将托架返回到其起始位置。而这正是回车的工作：一个金属杆连接到托架的左侧，当推动时，将托架返回到其起始位置。</p>
+<h4 id="电传打字机和回车换行crlf">电传打字机和回车换行（CRLF）</h4>
+<p>进入 20 世纪初，出现了电传打字机。基本上，它的工作方式与手动打字机相同，除了不是打印到物理纸上，而是通过传输器通过物理电线或无线电波将消息发送给接收方。</p>
+<p>虽然打印方式不同，但是同样需要使用换行符 (LF) 和回车符 (CR)，而且这些设备需要同时使用换行符 (LF) 和回车符 (CR) 以允许打字员从下一行文本的开头输入。毕竟手动打字机就是这样工作的，只是它没有任何“字符”的概念，因为它是一种机械操作的设备。</p>
+<p>我们可以将 LF 和 CR 视为代表水平或垂直方向上的独立运动，而不是同时代表两者，这样更容易将其形象化。为了实现这个功能，电传打字机在一些最早的操作系统中设定了 CRLF 行尾的标准，比如流行的 MS-DOS。将 CR 代表“回车”——CR 控制字符将打印头（“回车”）返回到第 0 列，而无需推进纸张。 LF 代表“换行”——LF 控制字符在不移动打印头的情况下将纸张前进一行。因此，如果您想将打印头返回到第 0 列（准备打印下一行）并推进纸张（以便在新纸上打印），则需要 CR 和 LF。</p>
+<p>MS-DOS 使用 CRLF 的两个字符组合来表示文件中的行尾，现代 Windows 计算机一直使用 CRLF 作为行尾。同时，从一开始，Unix 就使用 LF 来表示行尾，为了一致性和简单性而放弃了 CRLF。 Apple 最初仅在 Mac Classic 上使用 CR，但最终在 OS X 上改用了 LF，与 Unix 一致。</p>
+<p>虽然这似乎是操作系统之间的差异，但 CRLF 与 LF 的这个问题已经引起人们很长时间的头痛。其实按照今天的标准 CRLF 是多余的——同时使用回车和换行是假设你受到打字机的物理限制，你必须明确地向上移动你的纸，然后重置移动到左边距。但是对于电子文件，将换行符定义为隐式完成换行和回车的工作就足够了。换句话说，只要操作系统定义换行符表示下一行从开头开始而不是从某个任意的列偏移处开始，那么除了换行之外，我们不需要显式回车——一个符号可以完成两者的工作。</p>
+<p>现在我们知道 CRLF 和 CR 是如何起源的，接下来我们来学习以下怎么处理相关的问题。</p>
+<h2 id="检查和转换行尾在-bash-中">检查和转换行尾（在 Bash 中）</h2>
+<p>在 bash 中，你可以使用带有 A 标志的 cat 查看特定文件的行尾：</p>
+<p>如果文件使用 CRLF，您将在每行末尾看到字符串 <code>^M$</code>，其中 <code>^M</code> 表示回车，<code>$</code> 表示换行。下面是一个示例：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">    line one^M$</span></span>
+<span class="line"><span style="color: #abb2bf">    line two^M$</span></span>
+<span class="line"><span style="color: #abb2bf">    line three^M$</span></span></code></pre>
+<p>如果文件使用 LF，那么您只会看到美元符号：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">    line one$</span></span>
+<span class="line"><span style="color: #abb2bf">    line two$</span></span>
+<span class="line"><span style="color: #abb2bf">    line three$</span></span></code></pre>
+<p>ps: 你可以使用<a href="https://linux.die.net/man/1/dos2unix" rel="nofollow">dos2unix<span>🔗</span></a>命令行程序将文件从 CRLF 转换为 LF。</p>
+<h2 id="git-中的行尾">Git 中的行尾</h2>
+<p>诚然，这需要很多背景知识！但这是值得的，因为我们终于准备好讨论与 git 相关的行尾（以及如何在任何给定的代码库中解决 CRLF 与 LF 的问题）。</p>
+<p>我们从前面可以知道 CRLF 和 LF 是不同的字符表示，因此缺少通用行结尾为 git 等版本控制软件带来了麻烦，这类软件依赖于非常精确的字符比较来确定文件自上次签入以来是否发生了变化。如果开发人员使用 Windows 并且另一个使用 Mac 或 Linux，他们每个人都保存和提交相同的文件，他们可能会在他们的 git diff 中看到行结束更改——从 CRLF 到 LF 的转换，反之亦然。由于单字符更改，这会导致不必要的麻烦，非常烦人。</p>
+<h3 id="使用-coreautocrlf-在-git-中配置行尾">使用 <code>core.autocrlf</code> 在 Git 中配置行尾</h3>
+<p>可以使用<code>core.autocrlf</code>配置告诉 git 如何处理系统上的行尾。可以通过以下命令完成：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">    git config --global core.autocrlf [true|false|input]</span></span></code></pre>
+<p>注意，false 值会关闭行尾转换，这通常是不可取的，除非是团队中的每个人都使用相同的操作系统。当然，我觉得这种情况很少发生，所以慎用（除非你使用 .gitattributes 配置，在这种情况下，它会优先于你的 git 配置——稍后会详细介绍）。</p>
+<p>所以，一般来说我们只有两个选择：<code>autocrlf true</code> 和 <code>autocrlf input</code>。这两者有什么区别？</p>
+<h4 id="autocrlf-true"><code>autocrlf true</code></h4>
+<p>当 autocrlf 为 true 时（git 默认行为），文件将使用 git 在本地检出为 CRLF，但是每当你提交文件时，CRLF 的所有实例都将替换为 LF。基本上，此设置可确保你的代码库在所有文件的最终版本中始终使用 LF，但在获取时在本地使用 CRLF。这是 Windows 开发人员的推荐设置，因为 CRLF 是 Windows 的本机行结尾。</p>
+<p>如果使用此选项，则每次在 Windows 上暂存文件以进行提交时可能会看到下面警告：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">    warning: CRLF will be replaced by LF </span><span style="color: #C678DD">in</span><span style="color: #ABB2BF"> &#x3C;file-name>.</span></span>
+<span class="line"><span style="color: #ABB2BF">    The file will have its original line endings </span><span style="color: #C678DD">in</span><span style="color: #ABB2BF"> your working directory.</span></span></code></pre>
+<p>这并不是说出现问题， Git 只是警告你，根据此设置的预期行为，你的 CRLF 行结尾将在提交时规范化为 LF。</p>
+<h4 id="autocrlf-input"><code>autocrlf input</code></h4>
+<p>使用 <code>autocrlf input</code>，文件在提交时转换为 LF，但在获取时不会转换为任何内容。因此名称为“输入”——你得到是你最初输入的内容。如果一个文件最初被 Windows 开发人员意外提交为 CRLF，你会在本地看到它是 CRLF（如果你修改它，你会强制它变成 LF）。如果文件最初是作为 LF 添加的，您会看到它是 LF。这通常是一件好事，因为这意味着你将始终在代码库中获得 LF 行结尾（假设你从一开始就使用它）。</p>
+<p>input 和 ​​true 之间的唯一区别是输入不会在本地获取时处理行尾。这是 Mac/Linux 开发人员的推荐设置，因为这些操作系统默认使用 LF。</p>
+<h2 id="使用-gitattributes-在-git-中规范行尾">使用 .gitattributes 在 Git 中规范行尾</h2>
+<p>在你的 repo 的根目录创建一个 .gitattributes 文件来一劳永逸地行尾不一致的问题。 Git 会读取此文件并在您本地获取或提交文件时应用其规则，确保无论每个开发人员如何在本地配置 git 或他们使用什么操作系统，都强制执行行尾约定。</p>
+<h3 id="一个简单的-gitattributes-配置">一个简单的 .gitattributes 配置</h3>
+<p>这是一个 .gitattributes 文件，应该涵盖大多数用例：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">    </span><span style="color: #7F848E"># We'll let Git's auto-detection algorithm infer if a file is text. If it is,</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #7F848E"># enforce LF line endings regardless of OS or git configurations.</span></span>
+<span class="line"><span style="color: #ABB2BF">    * text=auto eol=lf</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #7F848E"># Isolate binary files in case the auto-detection algorithm fails and</span></span>
+<span class="line"><span style="color: #ABB2BF">    </span><span style="color: #7F848E"># marks them as text files (which could brick them).</span></span>
+<span class="line"><span style="color: #ABB2BF">    *.{png,jpg,jpeg,gif,webp,woff,woff2} binary</span></span></code></pre>
+<p>提交该文件并将其推送到远程服务器。</p>
+<p>git 使用一种简单的算法来检测你的 repo 中的特定文件是文本文件还是二进制文件（例如，可执行文件、图像或字体文件）。默认情况下，此算法用于比较已更改的文件，但它也可以用于强制行尾约定。</p>
+<p>这就是上面配置中 <code>text=auto</code> 的作用——它告诉 git 应用其自动检测算法来确定文件是否是文本文件。然后， <code>eol=lf</code> 告诉 git 在本地获取和提交时强制执行文本文件的 LF 行结尾。这适用于 Windows 和 Linux，因为现在大多数跨平台文本编辑器都支持 LF。</p>
+<p>Git 的自动检测算法相当准确，但如果它无法正确区分文本文件和二进制文件（如图像或字体文件），我们也可以将文件的子集显式标记为二进制文件以避免作为文本文件处理他们。这可以用下面的代码实现：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">    *.{png,jpg,jpeg,gif,webp,woff,woff2} binary</span></span></code></pre>
+<p>现在，提交此文件后，最后一步是重新规范化所有在添加 <code>.gitattributes</code> 之前已签入 git 的文件的所有行尾。你可以使用以下命令执行此操作：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">    git add --renormalize </span><span style="color: #56B6C2">.</span></span></code></pre>
+<p>这会根据 <code>.gitattributes</code> 配置中定义的规则重新格式化所有文件。如果先前提交的文件在 git 的索引中使用 CRLF 并且由于此重新规范化而转换为 LF，则它们的行尾将在索引中更新，并且这些文件将暂存以进行提交。唯一要做的就是提交这些更改并将它们推送到远程存储库。之后引入的新文件，其行尾都将作为 LF 签入（和签出）。</p>
+<h4 id="git-行尾工作树与索引">Git 行尾：工作树与索引</h4>
+<p>提交这些重新规范化的文件时，您可能会看到以下消息：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">    warning: CRLF will be replaced by LF in &#x3C;file-name>.</span></span>
+<span class="line"><span style="color: #abb2bf">    The file will have its original line endings in your working directory.</span></span></code></pre>
+<p>这是预期的行为——CRLF 将成为 Git 索引中的 LF，这意味着当你将这些文件推送到你的存储库时，它们将在你的远程代码库中具有 LF 行结尾。任何后来提取或获取该代码的人都会在本地看到 LF 行结尾。</p>
+<p>但是 git 实际上并没有更改文件的本地文件（即其工作树中的那些）的行尾。因此，警告消息的最后一点表示刚刚重新规范化的文件仍会继续在本地使用 CRLF。</p>
+<h3 id="在-git-中验证任何文件的行尾">在 Git 中验证任何文件的行尾</h3>
+<p>如果想在所有这些步骤之后仔细检查 Git 索引中的文件是否使用正确的行结尾，可以运行以下命令：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">    git ls-files --eol</span></span></code></pre>
+<p>这将显示 git 正在跟踪的所有文件的行尾信息，格式如下：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">    i/lf    w/crlf  attr/text=auto eol=lf   file.txt</span></span></code></pre>
+<p>从左到右分别是：</p>
+<ul>
+<li>i：索引中的行尾（被推送到你的仓库的行）。应该是 LF。</li>
+<li>w：工作树中的行尾（可能是 CRLF，但如果索引是 LF 也可以）。</li>
+<li>attr：适用于此文件的 <code>.gitattributes</code> 规则。</li>
+<li>文件名。</li>
+</ul>
+<p>或者，你可以在将代码推送到远程后，通过在 Windows 机器上重新克隆您的存储库来仔细检查 git 是否正确规范了您的行尾。你应该看到文件的索引和工作树副本都使用 LF 而不是 CRLF（假设 LF 是您选择规范化行尾的方式）。</p>
+<h2 id="editorconfig-文件"><code>.editorconfig</code> 文件</h2>
+<p>从技术上讲，一个 <code>.gitattributes</code> 文件是你执行代码库远程副本上显示的行尾所需的全部内容。但是，正如我们在上面看到的，你可能仍然会在本地看到你创建的文件的 CRLF 行结尾，因为 .gitattributes 不会告诉 git 更改文件的工作副本。</p>
+<p>当然，这并不意味着 git 的规范化过程不起作用。但是，如果你还使用 ESLint 和 Prettier 对代码进行 linting，这可能会很烦人，在这种情况下，它们会不断抛出错误并告诉您删除那些额外的 CR：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/baddate/imagedb@master/blog_contents/crlf_lf.webp" alt=""></p>
+<p>所以，你可以使用 <code>.editorconfig</code> 文件更进一步；这是一个与编辑器无关的项目，旨在创建用于自定义任何给定文本编辑器行为的标准化格式。许多文本编辑器（包括 <code>VS Code</code>，<code>IDEA</code>，<code>GitHub</code>）支持并自动读取此文件（如果存在）。你可以将这样的内容放在工作区的根目录中，你可以在<a href="https://editorconfig.org" rel="nofollow">这里<span>🔗</span></a>深入了解：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #abb2bf">    root = true</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span>
+<span class="line"><span style="color: #abb2bf">    [*]</span></span>
+<span class="line"><span style="color: #abb2bf">    end_of_line = lf</span></span>
+<span class="line"><span style="color: #abb2bf"></span></span></code></pre>
+<p>除了一堆其他设置之外，你还可以指定应用于通过此文本编辑器创建的任何新文件的行尾。这样，如果使用 VS Code 在 Windows 上创建一个新文件，你将始终在工作树中看到行结尾为 LF。</p>
+<h2 id="参考">参考</h2>
+<p><a href="https://stackoverflow.com/a/56858538/5323344" rel="nofollow">https://stackoverflow.com/a/56858538/5323344<span>🔗</span></a></p>
+<p><a href="https://www.aleksandrhovhannisyan.com/blog/crlf-vs-lf-normalizing-line-endings-in-git/" rel="nofollow">https://www.aleksandrhovhannisyan.com/blog/crlf-vs-lf-normalizing-line-endings-in-git/<span>🔗</span></a></p>
+<p><a href="https://editorconfig.org/" rel="nofollow">https://editorconfig.org/<span>🔗</span></a></p>
+    </article>
+    <ul class="tags-container astro-VJ4TPSPI">
+      <li class="inline-block my-1 underline-offset-4 astro-BLWJYJPT">
+  <a href="/tags/crlf" class="text-sm pr-2 group astro-BLWJYJPT">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-BLWJYJPT"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">crlf</span>
+  </a>
+</li><li class="inline-block my-1 underline-offset-4 astro-BLWJYJPT">
+  <a href="/tags/typography" class="text-sm pr-2 group astro-BLWJYJPT">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-BLWJYJPT"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">typography</span>
+  </a>
+</li>
+    </ul>
+  </main>
+  <footer class="mt-auto astro-SZ7XMLTE">
+  <div class="max-w-3xl mx-auto px-0">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+  <div class="footer-wrapper astro-SZ7XMLTE">
+    <div class="social-icons flex astro-UPU6FZXR">
+  <a href="https://github.com/baddate" tabindex="0" class="group inline-block link-button astro-UPU6FZXR astro-5EUNQZKT" title=" SMJ on Github">
+  
+        <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="icon-tabler"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path
+      d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"
+    ></path>
+  </svg>
+      
+</a><a href="https://twitter.com/realSanmoji" tabindex="0" class="group inline-block link-button astro-UPU6FZXR astro-5EUNQZKT" title="SMJ on Twitter">
+  
+        <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon-tabler"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z"></path>
+    </svg>
+      
+</a>
+</div>
+    <div class="copyright-wrapper astro-SZ7XMLTE">
+      <span class="astro-SZ7XMLTE">Copyright &#169; 2023</span>
+      <span class="separator astro-SZ7XMLTE">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE"><a href="/privacy" class="astro-SZ7XMLTE">Privacy</a></span>
+      <span class="separator astro-SZ7XMLTE">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE"><a href="/disclaimer" class="astro-SZ7XMLTE">Disclaimer</a></span>
+    </div>
+  </div>
+</footer>
+
+  </body></html>
+

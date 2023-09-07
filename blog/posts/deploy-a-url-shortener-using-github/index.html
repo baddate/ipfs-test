@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="canonical" href="https://smj.im/posts/deploy-a-url-shortener-using-github/">
+    <meta name="generator" content="Astro v2.2.1">
+
+    <!-- General Meta Tags -->
+    <title>黑科技：使用GitHub搭建自己的短链接服务</title>
+    <meta name="title" content="黑科技：使用GitHub搭建自己的短链接服务">
+    <meta name="description" content="使用两个GitHub仓库和一个域名就能拥有免费的短链接服务。">
+    <meta name="author" content="Sanmoji">
+    <meta name="keywords" content="Linux, AI, Thinking">
+    <link rel="sitemap" href="/sitemap-index.xml">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="黑科技：使用GitHub搭建自己的短链接服务">
+    <meta property="og:description" content="使用两个GitHub仓库和一个域名就能拥有免费的短链接服务。">
+    <meta property="og:url" content="https://smj.im/posts/deploy-a-url-shortener-using-github/">
+    <meta property="og:image" content="https://smj.im/%E9%BB%91%E7%A7%91%E6%8A%80%EF%BC%9A%E4%BD%BF%E7%94%A8GitHub%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E7%9F%AD%E9%93%BE%E6%8E%A5%E6%9C%8D%E5%8A%A1.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://smj.im/posts/deploy-a-url-shortener-using-github/">
+    <meta property="twitter:title" content="黑科技：使用GitHub搭建自己的短链接服务">
+    <meta property="twitter:description" content="使用两个GitHub仓库和一个域名就能拥有免费的短链接服务。">
+    <meta property="twitter:image" content="https://smj.im/%E9%BB%91%E7%A7%91%E6%8A%80%EF%BC%9A%E4%BD%BF%E7%94%A8GitHub%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E7%9F%AD%E9%93%BE%E6%8E%A5%E6%9C%8D%E5%8A%A1.png">
+
+    <!-- Umami Tracking Code -->
+    <script>(function(){const tid = "7e882ff9-48a6-48d9-9c4a-11f7c4fb671c";
+const tdomain = "um.oii.im";
+
+      // 检查是否在本地环境（假设本地环境的主机名为"localhost"或"127.0.0.1"）
+      if (
+        window.location.hostname !== "localhost" &&
+        window.location.hostname !== "127.0.0.1"
+      ) {
+        // 如果不是本地环境，则加载Umami脚本
+        const trackingURL = "https://" + tdomain + "/script.js";
+        console.log("this is not localhost");
+        // 替换 YOUR_UMAMI_WEBSITE_ID 为你自己的Umami网站ID
+        const umamiWebsiteId = { tid };
+        const umamiTrackingURL = trackingURL;
+
+        console.log(umamiWebsiteId);
+        console.log(umamiTrackingURL);
+        // 获取当前正在执行的<script>标签
+        const currentScript = document.currentScript;
+
+        // 创建并添加Umami脚本到页面
+        const umamiScript = document.createElement("script");
+        umamiScript.async = true;
+        umamiScript.defer = true;
+        umamiScript.dataset.websiteId = umamiWebsiteId.tid;
+        umamiScript.src = umamiTrackingURL;
+
+        // 在当前<script>标签之后插入新创建的<script>标签
+        currentScript.parentNode.insertBefore(
+          umamiScript,
+          currentScript.nextSibling
+        );
+      } else {
+        console.log("this is localhost");
+      }
+    })();</script>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
+    
+    <link rel="sitemap" href="/sitemap-index.xml">
+    <script src="/toggle-theme.js"></script>
+  <link rel="stylesheet" href="/_astro/about.d5105181.css" />
+<link rel="stylesheet" href="/_astro/about.6e6daff0.css" />
+<link rel="stylesheet" href="/_astro/_slug_.40cf44c5.css" />
+<link rel="stylesheet" href="/_astro/_slug_.41a32359.css" />
+<link rel="stylesheet" href="/_astro/_slug_.ad230599.css" />
+<link rel="stylesheet" href="/_astro/_slug_.906d67ca.css" /><script type="module" src="/_astro/hoisted.d675ed42.js"></script></head>
+  <body>
+    
+  <header class="astro-3EF6KSR2">
+  <a id="skip-to-content" href="#main-content" class="astro-3EF6KSR2">Skip to content</a>
+  <div class="nav-container astro-3EF6KSR2">
+    <div class="top-nav-wrap astro-3EF6KSR2">
+      <a href="/" class="logo astro-3EF6KSR2">
+        方寸之间
+      </a>
+      <nav id="nav-menu" class="astro-3EF6KSR2">
+        <button class="hamburger-menu focus-outline astro-3EF6KSR2" aria-label="Open Menu" aria-expanded="false" aria-controls="menu-items">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="menu-icon astro-3EF6KSR2">
+            <line x1="7" y1="12" x2="21" y2="12" class="line astro-3EF6KSR2"></line>
+            <line x1="3" y1="6" x2="21" y2="6" class="line astro-3EF6KSR2"></line>
+            <line x1="12" y1="18" x2="21" y2="18" class="line astro-3EF6KSR2"></line>
+            <line x1="18" y1="6" x2="6" y2="18" class="close astro-3EF6KSR2"></line>
+            <line x1="6" y1="6" x2="18" y2="18" class="close astro-3EF6KSR2"></line>
+          </svg>
+        </button>
+        <ul id="menu-items" class="display-none sm:flex astro-3EF6KSR2">
+          <li class="astro-3EF6KSR2">
+            <a href="/posts" class=" astro-3EF6KSR2">
+              Posts
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/tags" class=" astro-3EF6KSR2">
+              Tags
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/links" class=" astro-3EF6KSR2">
+              Links
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/about" class=" astro-3EF6KSR2">
+              About
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/search" tabindex="0" class="group inline-block focus-outline p-3 sm:p-1  astro-3EF6KSR2 astro-5EUNQZKT" aria-label="search" title="Search">
+  
+              <svg xmlns="http://www.w3.org/2000/svg" class="scale-125 sm:scale-100 astro-3EF6KSR2"><path d="M19.023 16.977a35.13 35.13 0 0 1-1.367-1.384c-.372-.378-.596-.653-.596-.653l-2.8-1.337A6.962 6.962 0 0 0 16 9c0-3.859-3.14-7-7-7S2 5.141 2 9s3.14 7 7 7c1.763 0 3.37-.66 4.603-1.739l1.337 2.8s.275.224.653.596c.387.363.896.854 1.384 1.367l1.358 1.392.604.646 2.121-2.121-.646-.604c-.379-.372-.885-.866-1.391-1.36zM9 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z" class="astro-3EF6KSR2"></path>
+              </svg>
+            
+</a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <button id="theme-btn" class="focus-outline astro-3EF6KSR2" title="Toggles light & dark" aria-label="auto" aria-live="polite">
+                  <svg xmlns="http://www.w3.org/2000/svg" id="moon-svg" class="astro-3EF6KSR2">
+                    <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" id="sun-svg" class="astro-3EF6KSR2">
+                    <path d="M6.993 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007S14.761 6.993 12 6.993 6.993 9.239 6.993 12zM12 8.993c1.658 0 3.007 1.349 3.007 3.007S13.658 15.007 12 15.007 8.993 13.658 8.993 12 10.342 8.993 12 8.993zM10.998 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2h-3zm17 0h3v2h-3zM4.219 18.363l2.12-2.122 1.415 1.414-2.12 2.122zM16.24 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.342 7.759 4.22 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="max-w-3xl mx-auto px-4">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+</header>
+  <div class="mx-auto flex w-full max-w-3xl justify-start px-2 astro-VJ4TPSPI">
+    <button class="focus-outline mb-2 mt-8 flex hover:opacity-75 astro-VJ4TPSPI" onclick="history.back()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="astro-VJ4TPSPI"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-VJ4TPSPI"></path>
+      </svg><span class="astro-VJ4TPSPI">Go back</span>
+    </button>
+  </div>
+  <main id="main-content" class="astro-VJ4TPSPI">
+    <h1 class="post-title astro-VJ4TPSPI">黑科技：使用GitHub搭建自己的短链接服务</h1>
+    <div class="flex items-center space-x-2 opacity-80 my-2 astro-VJ4TPSPI"><svg xmlns="http://www.w3.org/2000/svg" class="scale-100 inline-block h-6 w-6 fill-skin-base" aria-hidden="true"><path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path><path d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z"></path></svg><span class="sr-only">Posted on:</span><span class="italic text-base">December 1, 2020<span aria-hidden="true"> | </span><span class="sr-only"> at </span>04:25 PM</span></div>
+    <article id="article" role="article" class="prose mx-auto mt-8 max-w-3xl astro-VJ4TPSPI">
+      <button class="goTopButton astro-VJ4TPSPI">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="icon-tabler astro-VJ4TPSPI" viewBox="0 0 16 16">
+          <path d="M3.204 11h9.592L8 5.519 3.204 11zm-.753-.659 4.796-5.48a1 1 0 0 1 1.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 0 1-.753-1.659z" class="astro-VJ4TPSPI"></path>
+        </svg>
+      </button>
+      <p>前两天偶然在 GitHub 发现一个挺有意思的项目，可以不依赖自己的服务器、数据库来构建一个短链接服务。自己尝试了一下，还挺简单的。这里记录一下自己的构建流程，感兴趣的小伙伴可以自己尝试一下。</p>
+<h2 id="table-of-contents">Table of contents</h2>
+<p></p><details><summary>Open Table of contents</summary><p></p>
+<ul>
+<li>
+<p><a href="#prerequisites">Prerequisites</a></p>
+</li>
+<li>
+<p><a href="#%E8%8E%B7%E5%8F%96%E5%8F%8A%E9%85%8D%E7%BD%AE%E6%BA%90%E7%A0%81">获取及配置源码</a></p>
+</li>
+<li>
+<p><a href="#%E9%85%8D%E7%BD%AE-github-pages">配置 GitHub Pages</a></p>
+<ul>
+<li><a href="#%E5%A6%82%E6%9E%9C%E4%BD%A0%E4%B8%8D%E4%BD%BF%E7%94%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E5%9F%9F%E5%90%8D">如果你不使用自己的域名</a></li>
+<li><a href="#%E5%A6%82%E6%9E%9C%E4%BD%A0%E7%94%A8%E4%BA%86%E8%87%AA%E5%B7%B1%E7%9A%84%E5%9F%9F%E5%90%8D">如果你用了自己的域名</a></li>
+</ul>
+</li>
+<li>
+<p><a href="#%E6%B5%8B%E8%AF%95%E6%95%88%E6%9E%9C">测试效果</a></p>
+</li>
+<li>
+<p><a href="#%E6%80%BB%E7%BB%93">总结</a></p>
+</li>
+<li>
+<p><a href="#%E5%8F%82%E8%80%83">参考</a></p>
+</li>
+</ul>
+<p></p></details><p></p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ol>
+<li>新建两个 GitHub 仓库，一个用来做服务器存储源码、提供服务(url_shortener)，一个用来做数据库存储链接(url_shortener_db)</li>
+<li>注册一个域名（可选），如果没有的话，可以直接使用 GitHub pages 的域名(<code>username.github.io</code>)。不过我是用了自己注册的域名：blog.johan.zone</li>
+</ol>
+<h2 id="获取及配置源码">获取及配置源码</h2>
+<p>首先，你需要获取这个服务的源代码，你可以直接 fork 这个<a href="https://github.com/nelsontky/gh-pages-url-shortener" rel="nofollow">源码仓库<span>🔗</span></a>，当然也欢迎 fork 我的<a href="https://github.com/baddate/url_shortener" rel="nofollow">代码仓库<span>🔗</span></a>。</p>
+<p>然后，克隆自己的仓库到本地(当然，你也可以直接在 GitHub 网页上操作)，修改<code>404.html</code>文件的<code>GITHUB_ISSUES_LINK</code>字段，指向自己的<code>url_shortener_db</code>仓库，这个仓库的<code>issues</code>就是作为存储你的链接的数据库：</p>
+<pre is:raw="" class="astro-code" style="background-color: #282c34; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;"><code><span class="line"><span style="color: #ABB2BF">var GITHUB_ISSUES_LINK =</span></span>
+<span class="line"><span style="color: #ABB2BF">"https://api.github.com/repos/username/repo-name/issues/";</span></span></code></pre>
+<p><em>注意把上面的<code>username</code> <code>repo-name</code>替换为自己的用户名及仓库名。还有，<strong>最后的<code>/</code>不要漏掉</strong>，这是获取链接的关键</em></p>
+<h2 id="配置-github-pages">配置 GitHub Pages</h2>
+<p>接下来就是配置 Github Pages 了，这部分也很简单。</p>
+<p>点击仓库的<code>Settings</code>选项，找到其中的<code>GitHub Pages</code>部分，然后配置<code>Source</code>中的分支：
+<img src="https://cdn.staticaly.com/gh/baddate/pichost@master/blog/githubpage_url_shortener.g1sx3i6eyhk.webp" alt=""></p>
+<p>下面的部分根据自己需要选择：</p>
+<h3 id="如果你不使用自己的域名">如果你不使用自己的域名</h3>
+<ol>
+<li>删除仓库中的<code>CNAME</code>文件</li>
+<li>把<code>404.html</code>文件中的<code>var PATH_SEGMENTS_TO_SKIP = 0;</code>改为<code>var PATH_SEGMENTS_TO_SKIP = 1;</code></li>
+<li>到这里就结束了，你可以直接跳到<a href="#%E6%B5%8B%E8%AF%95%E6%95%88%E6%9E%9C">下一部分</a></li>
+</ol>
+<h3 id="如果你用了自己的域名">如果你用了自己的域名</h3>
+<ol>
+<li>到你的域名服务商，添加一个 CNAME 解析，域名指向<code>username.github.io</code>，注意替换<code>username</code>为自己的 GitHub 用户名</li>
+<li>等待几分钟（域名解析生效需要时间，所以最好提前做），再进入到 github pages 部分，键入你自己的域名，最好勾选<strong>Enforce HTTPS</strong>，然后点击<code>Save</code>，刷新页面，会显示下面的内容:
+<img src="https://cdn.staticaly.com/gh/baddate/pichost@master/blog/url_shortener_config.6m9wl4ow9uv4.webp" alt=""></li>
+<li>把<code>CNAME</code>文件中的域名更改为你配置好的域名</li>
+<li>到此，就配置完成了，接下来可以测试一下</li>
+</ol>
+<h2 id="测试效果">测试效果</h2>
+<ol>
+<li>
+<p>在你开始作为数据库的 GitHub 仓库创建一个 issue，标题就是你需要缩短的链接，其他什么都不需要做，直接 Submit 就行了。</p>
+</li>
+<li>
+<p>等待一会儿，然后在浏览器查询链接<code>https://&#x3C;your-domain>/&#x3C;issue-no></code>。例如：<code>https://tldr.plus/2</code>，点击这个链接会跳转到我的博客。其中的<code>tldr.plus</code>是我的域名，<code>1</code>代表 issue 的楼层数。</p>
+</li>
+</ol>
+<h2 id="总结">总结</h2>
+<p>如果大家觉得麻烦，也可以使用我搭建的服务，你可以点击<a href="https://github.com/baddate/url_shortener_db/issues/new" rel="nofollow">这里<span>🔗</span></a>提供链接。</p>
+<p>有人在<a href="https://github.com/nelsontky/gh-pages-url-shortener/issues/5#issuecomment-728040879" rel="nofollow">这里<span>🔗</span></a>给了一个比较好的解释，大家可以参考一下。</p>
+<h2 id="参考">参考</h2>
+<p><a href="https://github.com/nelsontky/gh-pages-url-shortener" rel="nofollow">https://github.com/nelsontky/gh-pages-url-shortener<span>🔗</span></a></p>
+    </article>
+    <ul class="tags-container astro-VJ4TPSPI">
+      <li class="inline-block my-1 underline-offset-4 astro-BLWJYJPT">
+  <a href="/tags/github" class="text-sm pr-2 group astro-BLWJYJPT">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-BLWJYJPT"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">github</span>
+  </a>
+</li><li class="inline-block my-1 underline-offset-4 astro-BLWJYJPT">
+  <a href="/tags/shortener" class="text-sm pr-2 group astro-BLWJYJPT">
+    <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-BLWJYJPT"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">shortener</span>
+  </a>
+</li>
+    </ul>
+  </main>
+  <footer class="mt-auto astro-SZ7XMLTE">
+  <div class="max-w-3xl mx-auto px-0">
+  <hr class="border-skin-line" aria-hidden="true">
+</div>
+  <div class="footer-wrapper astro-SZ7XMLTE">
+    <div class="social-icons flex astro-UPU6FZXR">
+  <a href="https://github.com/baddate" tabindex="0" class="group inline-block link-button astro-UPU6FZXR astro-5EUNQZKT" title=" SMJ on Github">
+  
+        <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="icon-tabler"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path
+      d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"
+    ></path>
+  </svg>
+      
+</a><a href="https://twitter.com/realSanmoji" tabindex="0" class="group inline-block link-button astro-UPU6FZXR astro-5EUNQZKT" title="SMJ on Twitter">
+  
+        <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon-tabler"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c-.002 -.249 1.51 -2.772 1.818 -4.013z"></path>
+    </svg>
+      
+</a>
+</div>
+    <div class="copyright-wrapper astro-SZ7XMLTE">
+      <span class="astro-SZ7XMLTE">Copyright &#169; 2023</span>
+      <span class="separator astro-SZ7XMLTE">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE"><a href="/privacy" class="astro-SZ7XMLTE">Privacy</a></span>
+      <span class="separator astro-SZ7XMLTE">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE"><a href="/disclaimer" class="astro-SZ7XMLTE">Disclaimer</a></span>
+    </div>
+  </div>
+</footer>
+
+  </body></html>
+
