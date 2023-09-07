@@ -1,0 +1,43 @@
+name: Deploy to IPFS
+
+on:
+  push:
+    branches:
+      - master  # 根据你的分支名称进行修改
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install IPFS
+        run: |
+          curl -fsSL https://dist.ipfs.io/go-ipfs/v0.11.0/go-ipfs_v0.11.0_linux-amd64.tar.gz | tar xz
+          sudo mv go-ipfs/ipfs /usr/local/bin/
+        shell: bash
+
+      - name: Initialize IPFS
+        run: |
+          ipfs init
+          ipfs daemon --enable-pubsub-experiment &
+          sleep 5  # 等待 IPFS 节点启动
+        shell: bash
+
+      - name: Add website content to IPFS
+        run: |
+          ipfs add -r blog
+        shell: bash
+
+      - name: Publish website to IPNS
+        run: |
+          CID=$(ipfs add -r -Q blog)
+          ipfs name publish $CID
+          echo "::set-output name=cid::$CID"
+        shell: bash
+
+      - name: Set CID as an output
+        id: set-cid
+        run: echo "CID is ${{ steps.publish-website.outputs.cid }}"
