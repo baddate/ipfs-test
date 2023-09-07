@@ -31,13 +31,11 @@ jobs:
           ipfs add -r blog
         shell: bash
 
-      - name: Publish website to IPNS
+      - name: Publish website to IPNS and set CID as environment variable
         run: |
           CID=$(ipfs add -r -Q blog)
+          echo $CID
           ipfs name publish $CID
-          echo "::set-output name=cid::$CID"
+          echo "CID=$CID" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Set CID as an output
-        id: set-cid
-        run: echo "CID is ${{ steps.publish-website.outputs.cid }}"
